@@ -5,3 +5,5 @@ repl-temp-*
 
 node_modules
 src/Generated
+src/Api
+.envrc

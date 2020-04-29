@@ -1,0 +1,16 @@
+type Project {
+  name: String!
+  description: String!
+  files: [File] @relation
+}
+
+type File {
+  path: String!
+  description: String!
+  content: String!
+  project: Project!
+}
+
+type Query {
+  allProjects: [Project!]
+}
