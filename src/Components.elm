@@ -10,9 +10,9 @@ layout : { page : Document msg } -> Document msg
 layout { page } =
     { title = page.title
     , body =
-        [ div [ class "column spacing--large pad--medium container h--fill" ]
+        [ div []
             [ navbar
-            , div [ class "column", style "flex" "1 0 auto" ] page.body
+            , div [ class "container mx-auto", style "flex" "1 0 auto" ] page.body
             , footer
             ]
         ]
@@ -21,17 +21,20 @@ layout { page } =
 
 navbar : Html msg
 navbar =
-    header [ class "row center-y spacing--between" ]
-        [ a [ class "link font--h5", href (Route.toHref Route.Top) ] [ text "home" ]
-        , div [ class "row center-y spacing--medium" ]
-            [ a [ class "link", href (Route.toHref Route.Docs) ] [ text "docs" ]
-            , a [ class "link", href (Route.toHref Route.NotFound) ] [ text "a broken link" ]
-            , a [ class "link", href (Route.toHref Route.Projects_Index) ] [ text "projects" ]
-            , a [ class "button", href "https://twitter.com/intent/tweet?text=elm-spa is ez pz" ] [ text "tweet about it" ]
+    header [ class "mb-4 py-2 border" ]
+        [ div [ class "container mx-auto flex justify-between" ]
+            [ a [ class "", href (Route.toHref Route.Top) ] [ text "home" ]
+            , div [ class "flex" ]
+                [ a [ class "link", href (Route.toHref Route.Projects_Index) ] [ text "projects" ]
+                ]
             ]
         ]
 
 
 footer : Html msg
 footer =
-    Html.footer [] [ text "built with elm ❤" ]
+    Html.footer [ class "mt-4 py-2 border-t" ]
+        [ div
+            [ class "container mx-auto" ]
+            [ text "built with elm ❤" ]
+        ]

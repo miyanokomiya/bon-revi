@@ -10967,6 +10967,7 @@ var $elm$url$Url$Parser$parse = F2(
 	});
 var $author$project$Generated$Route$Docs = {$: 'Docs'};
 var $author$project$Generated$Route$Projects_Index = {$: 'Projects_Index'};
+var $author$project$Generated$Route$Projects_New = {$: 'Projects_New'};
 var $author$project$Generated$Route$Top = {$: 'Top'};
 var $elm$url$Url$Parser$Parser = function (a) {
 	return {$: 'Parser', a: a};
@@ -11076,7 +11077,14 @@ var $author$project$Generated$Route$routes = $elm$url$Url$Parser$oneOf(
 			A2(
 				$elm$url$Url$Parser$slash,
 				$elm$url$Url$Parser$s('projects'),
-				$elm$url$Url$Parser$s('index')))
+				$elm$url$Url$Parser$s('index'))),
+			A2(
+			$elm$url$Url$Parser$map,
+			$author$project$Generated$Route$Projects_New,
+			A2(
+				$elm$url$Url$Parser$slash,
+				$elm$url$Url$Parser$s('projects'),
+				$elm$url$Url$Parser$s('new')))
 		]));
 var $author$project$Generated$Route$fromUrl = $elm$url$Url$Parser$parse($author$project$Generated$Route$routes);
 var $author$project$Main$fromUrl = A2(
@@ -11100,6 +11108,12 @@ var $author$project$Generated$Pages$Projects_Index_Model = function (a) {
 };
 var $author$project$Generated$Pages$Projects_Index_Msg = function (a) {
 	return {$: 'Projects_Index_Msg', a: a};
+};
+var $author$project$Generated$Pages$Projects_New_Model = function (a) {
+	return {$: 'Projects_New_Model', a: a};
+};
+var $author$project$Generated$Pages$Projects_New_Msg = function (a) {
+	return {$: 'Projects_New_Msg', a: a};
 };
 var $author$project$Generated$Pages$Top_Model = function (a) {
 	return {$: 'Top_Model', a: a};
@@ -11503,9 +11517,10 @@ var $dillonkearns$elm_graphql$Graphql$SelectionSet$nonNullElementsOrFail = funct
 			},
 			decoder));
 };
-var $author$project$Pages$Projects$Index$Project = function (name) {
-	return {name: name};
-};
+var $author$project$Pages$Projects$Index$Project = F2(
+	function (name, description) {
+		return {description: description, name: name};
+	});
 var $dillonkearns$elm_graphql$Graphql$RawField$Leaf = F2(
 	function (a, b) {
 		return {$: 'Leaf', a: a, b: b};
@@ -11529,6 +11544,7 @@ var $dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField 
 				$dillonkearns$elm_graphql$Graphql$Document$Field$hashedAliasName(newLeaf),
 				decoder));
 	});
+var $author$project$Api$Object$Project$description = A4($dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField, 'String', 'description', _List_Nil, $elm$json$Json$Decode$string);
 var $author$project$Api$Object$Project$name = A4($dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField, 'String', 'name', _List_Nil, $elm$json$Json$Decode$string);
 var $dillonkearns$elm_graphql$Graphql$SelectionSet$succeed = function (constructor) {
 	return A2(
@@ -11549,8 +11565,11 @@ var $dillonkearns$elm_graphql$Graphql$SelectionSet$with = F2(
 	});
 var $author$project$Pages$Projects$Index$projectSelection = A2(
 	$dillonkearns$elm_graphql$Graphql$SelectionSet$with,
-	$author$project$Api$Object$Project$name,
-	$dillonkearns$elm_graphql$Graphql$SelectionSet$succeed($author$project$Pages$Projects$Index$Project));
+	$author$project$Api$Object$Project$description,
+	A2(
+		$dillonkearns$elm_graphql$Graphql$SelectionSet$with,
+		$author$project$Api$Object$Project$name,
+		$dillonkearns$elm_graphql$Graphql$SelectionSet$succeed($author$project$Pages$Projects$Index$Project)));
 var $author$project$Pages$Projects$Index$projectPageSelection = A2(
 	$dillonkearns$elm_graphql$Graphql$SelectionSet$with,
 	$dillonkearns$elm_graphql$Graphql$SelectionSet$nonNullElementsOrFail(
@@ -12397,22 +12416,67 @@ var $author$project$Pages$Projects$Index$update = F3(
 				$elm$core$Platform$Cmd$none);
 		}
 	});
+var $elm$core$String$append = _String_append;
+var $author$project$Generated$Route$toHref = function (route) {
+	var segments = function () {
+		switch (route.$) {
+			case 'Top':
+				return _List_Nil;
+			case 'Docs':
+				return _List_fromArray(
+					['docs']);
+			case 'NotFound':
+				return _List_fromArray(
+					['not-found']);
+			case 'Projects_Index':
+				return _List_fromArray(
+					['projects', 'index']);
+			default:
+				return _List_fromArray(
+					['projects', 'new']);
+		}
+	}();
+	return A2(
+		$elm$core$String$append,
+		'/',
+		A2($elm$core$String$join, '/', segments));
+};
+var $author$project$Pages$Projects$Index$viewProjectRow = function (project) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('py-2 px-4 border rounded mt-2 first:mt-0')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('text-lg font-bold')
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text(project.name)
+					])),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('mt-1 border-t')
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text(project.description)
+					]))
+			]));
+};
 var $author$project$Pages$Projects$Index$viewResponse = function (response) {
 	return A2(
 		$elm$html$Html$div,
 		_List_Nil,
-		A2(
-			$elm$core$List$map,
-			function (prj) {
-				return A2(
-					$elm$html$Html$div,
-					_List_Nil,
-					_List_fromArray(
-						[
-							$elm$html$Html$text(prj.name)
-						]));
-			},
-			response.projectPage.data));
+		A2($elm$core$List$map, $author$project$Pages$Projects$Index$viewProjectRow, response.projectPage.data));
 };
 var $author$project$Pages$Projects$Index$view = F2(
 	function (global, model) {
@@ -12453,7 +12517,28 @@ var $author$project$Pages$Projects$Index$view = F2(
 				}();
 				return _List_fromArray(
 					[
-						$elm$html$Html$text('Projects.Index'),
+						A2(
+						$elm$html$Html$a,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('border py-2 px-4 bg-blue-500 text-white'),
+								$elm$html$Html$Attributes$href(
+								$author$project$Generated$Route$toHref($author$project$Generated$Route$Projects_New))
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('New')
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('mt-4 mb-2')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Project List')
+							])),
 						message
 					]);
 			}(),
@@ -12462,6 +12547,55 @@ var $author$project$Pages$Projects$Index$view = F2(
 	});
 var $author$project$Pages$Projects$Index$page = $author$project$Page$component(
 	{init: $author$project$Pages$Projects$Index$init, subscriptions: $author$project$Pages$Projects$Index$subscriptions, update: $author$project$Pages$Projects$Index$update, view: $author$project$Pages$Projects$Index$view});
+var $ryannhg$elm_spa$Spa$Advanced$element = function (page) {
+	return {
+		init: F2(
+			function (_v0, flags) {
+				return function (_v1) {
+					var model = _v1.a;
+					var cmd = _v1.b;
+					return _Utils_Tuple3(model, cmd, $elm$core$Platform$Cmd$none);
+				}(
+					page.init(flags));
+			}),
+		subscriptions: $elm$core$Basics$always(page.subscriptions),
+		update: F3(
+			function (_v2, msg, model) {
+				return function (_v3) {
+					var model_ = _v3.a;
+					var cmd = _v3.b;
+					return _Utils_Tuple3(model_, cmd, $elm$core$Platform$Cmd$none);
+				}(
+					A2(page.update, msg, model));
+			}),
+		view: $elm$core$Basics$always(page.view)
+	};
+};
+var $ryannhg$elm_spa$Spa$element = $ryannhg$elm_spa$Spa$Advanced$element;
+var $author$project$Page$element = $ryannhg$elm_spa$Spa$element;
+var $author$project$Pages$Projects$New$init = function (flags) {
+	return _Utils_Tuple2(
+		{},
+		$elm$core$Platform$Cmd$none);
+};
+var $author$project$Pages$Projects$New$subscriptions = function (model) {
+	return $elm$core$Platform$Sub$none;
+};
+var $author$project$Pages$Projects$New$update = F2(
+	function (msg, model) {
+		return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+	});
+var $author$project$Pages$Projects$New$view = function (model) {
+	return {
+		body: _List_fromArray(
+			[
+				$elm$html$Html$text('Projects.New')
+			]),
+		title: 'Projects.New'
+	};
+};
+var $author$project$Pages$Projects$New$page = $author$project$Page$element(
+	{init: $author$project$Pages$Projects$New$init, subscriptions: $author$project$Pages$Projects$New$subscriptions, update: $author$project$Pages$Projects$New$update, view: $author$project$Pages$Projects$New$view});
 var $author$project$Pages$Top$view = {
 	body: _List_fromArray(
 		[
@@ -12531,6 +12665,7 @@ var $author$project$Generated$Pages$pages = {
 	docs: A3($author$project$Page$upgrade, $author$project$Generated$Pages$Docs_Model, $author$project$Generated$Pages$Docs_Msg, $author$project$Pages$Docs$page),
 	notFound: A3($author$project$Page$upgrade, $author$project$Generated$Pages$NotFound_Model, $author$project$Generated$Pages$NotFound_Msg, $author$project$Pages$NotFound$page),
 	projects_index: A3($author$project$Page$upgrade, $author$project$Generated$Pages$Projects_Index_Model, $author$project$Generated$Pages$Projects_Index_Msg, $author$project$Pages$Projects$Index$page),
+	projects_new: A3($author$project$Page$upgrade, $author$project$Generated$Pages$Projects_New_Model, $author$project$Generated$Pages$Projects_New_Msg, $author$project$Pages$Projects$New$page),
 	top: A3($author$project$Page$upgrade, $author$project$Generated$Pages$Top_Model, $author$project$Generated$Pages$Top_Msg, $author$project$Pages$Top$page)
 };
 var $author$project$Generated$Pages$init = function (route) {
@@ -12541,8 +12676,10 @@ var $author$project$Generated$Pages$init = function (route) {
 			return $author$project$Generated$Pages$pages.docs.init(_Utils_Tuple0);
 		case 'NotFound':
 			return $author$project$Generated$Pages$pages.notFound.init(_Utils_Tuple0);
-		default:
+		case 'Projects_Index':
 			return $author$project$Generated$Pages$pages.projects_index.init(_Utils_Tuple0);
+		default:
+			return $author$project$Generated$Pages$pages.projects_new.init(_Utils_Tuple0);
 	}
 };
 var $author$project$Global$Model = F3(
@@ -12588,9 +12725,12 @@ var $author$project$Generated$Pages$bundle = function (bigModel) {
 		case 'NotFound_Model':
 			var model = bigModel.a;
 			return $author$project$Generated$Pages$pages.notFound.bundle(model);
-		default:
+		case 'Projects_Index_Model':
 			var model = bigModel.a;
 			return $author$project$Generated$Pages$pages.projects_index.bundle(model);
+		default:
+			var model = bigModel.a;
+			return $author$project$Generated$Pages$pages.projects_new.bundle(model);
 	}
 };
 var $author$project$Generated$Pages$subscriptions = function (model) {
@@ -12669,7 +12809,7 @@ var $elm$url$Url$toString = function (url) {
 var $author$project$Generated$Pages$update = F2(
 	function (bigMsg, bigModel) {
 		var _v0 = _Utils_Tuple2(bigMsg, bigModel);
-		_v0$4:
+		_v0$5:
 		while (true) {
 			switch (_v0.a.$) {
 				case 'Top_Msg':
@@ -12678,7 +12818,7 @@ var $author$project$Generated$Pages$update = F2(
 						var model = _v0.b.a;
 						return A2($author$project$Generated$Pages$pages.top.update, msg, model);
 					} else {
-						break _v0$4;
+						break _v0$5;
 					}
 				case 'Docs_Msg':
 					if (_v0.b.$ === 'Docs_Model') {
@@ -12686,7 +12826,7 @@ var $author$project$Generated$Pages$update = F2(
 						var model = _v0.b.a;
 						return A2($author$project$Generated$Pages$pages.docs.update, msg, model);
 					} else {
-						break _v0$4;
+						break _v0$5;
 					}
 				case 'NotFound_Msg':
 					if (_v0.b.$ === 'NotFound_Model') {
@@ -12694,43 +12834,29 @@ var $author$project$Generated$Pages$update = F2(
 						var model = _v0.b.a;
 						return A2($author$project$Generated$Pages$pages.notFound.update, msg, model);
 					} else {
-						break _v0$4;
+						break _v0$5;
 					}
-				default:
+				case 'Projects_Index_Msg':
 					if (_v0.b.$ === 'Projects_Index_Model') {
 						var msg = _v0.a.a;
 						var model = _v0.b.a;
 						return A2($author$project$Generated$Pages$pages.projects_index.update, msg, model);
 					} else {
-						break _v0$4;
+						break _v0$5;
+					}
+				default:
+					if (_v0.b.$ === 'Projects_New_Model') {
+						var msg = _v0.a.a;
+						var model = _v0.b.a;
+						return A2($author$project$Generated$Pages$pages.projects_new.update, msg, model);
+					} else {
+						break _v0$5;
 					}
 			}
 		}
 		return $elm$core$Basics$always(
 			_Utils_Tuple3(bigModel, $elm$core$Platform$Cmd$none, $elm$core$Platform$Cmd$none));
 	});
-var $elm$core$String$append = _String_append;
-var $author$project$Generated$Route$toHref = function (route) {
-	var segments = function () {
-		switch (route.$) {
-			case 'Top':
-				return _List_Nil;
-			case 'Docs':
-				return _List_fromArray(
-					['docs']);
-			case 'NotFound':
-				return _List_fromArray(
-					['not-found']);
-			default:
-				return _List_fromArray(
-					['projects', 'index']);
-		}
-	}();
-	return A2(
-		$elm$core$String$append,
-		'/',
-		A2($elm$core$String$join, '/', segments));
-};
 var $author$project$Global$update = F2(
 	function (msg, model) {
 		var route = msg.a;
@@ -12817,37 +12943,37 @@ var $author$project$Generated$Pages$view = function (model) {
 var $elm$html$Html$footer = _VirtualDom_node('footer');
 var $author$project$Components$footer = A2(
 	$elm$html$Html$footer,
-	_List_Nil,
 	_List_fromArray(
 		[
-			$elm$html$Html$text('built with elm ❤')
+			$elm$html$Html$Attributes$class('mt-4 py-2 border-t')
+		]),
+	_List_fromArray(
+		[
+			A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('container mx-auto')
+				]),
+			_List_fromArray(
+				[
+					$elm$html$Html$text('built with elm ❤')
+				]))
 		]));
 var $elm$html$Html$header = _VirtualDom_node('header');
 var $author$project$Components$navbar = A2(
 	$elm$html$Html$header,
 	_List_fromArray(
 		[
-			$elm$html$Html$Attributes$class('row center-y spacing--between')
+			$elm$html$Html$Attributes$class('mb-4 py-2 border')
 		]),
 	_List_fromArray(
 		[
 			A2(
-			$elm$html$Html$a,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$class('link font--h5'),
-					$elm$html$Html$Attributes$href(
-					$author$project$Generated$Route$toHref($author$project$Generated$Route$Top))
-				]),
-			_List_fromArray(
-				[
-					$elm$html$Html$text('home')
-				])),
-			A2(
 			$elm$html$Html$div,
 			_List_fromArray(
 				[
-					$elm$html$Html$Attributes$class('row center-y spacing--medium')
+					$elm$html$Html$Attributes$class('container mx-auto flex justify-between')
 				]),
 			_List_fromArray(
 				[
@@ -12855,48 +12981,34 @@ var $author$project$Components$navbar = A2(
 					$elm$html$Html$a,
 					_List_fromArray(
 						[
-							$elm$html$Html$Attributes$class('link'),
+							$elm$html$Html$Attributes$class(''),
 							$elm$html$Html$Attributes$href(
-							$author$project$Generated$Route$toHref($author$project$Generated$Route$Docs))
+							$author$project$Generated$Route$toHref($author$project$Generated$Route$Top))
 						]),
 					_List_fromArray(
 						[
-							$elm$html$Html$text('docs')
+							$elm$html$Html$text('home')
 						])),
 					A2(
-					$elm$html$Html$a,
+					$elm$html$Html$div,
 					_List_fromArray(
 						[
-							$elm$html$Html$Attributes$class('link'),
-							$elm$html$Html$Attributes$href(
-							$author$project$Generated$Route$toHref($author$project$Generated$Route$NotFound))
+							$elm$html$Html$Attributes$class('flex')
 						]),
 					_List_fromArray(
 						[
-							$elm$html$Html$text('a broken link')
-						])),
-					A2(
-					$elm$html$Html$a,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('link'),
-							$elm$html$Html$Attributes$href(
-							$author$project$Generated$Route$toHref($author$project$Generated$Route$Projects_Index))
-						]),
-					_List_fromArray(
-						[
-							$elm$html$Html$text('projects')
-						])),
-					A2(
-					$elm$html$Html$a,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('button'),
-							$elm$html$Html$Attributes$href('https://twitter.com/intent/tweet?text=elm-spa is ez pz')
-						]),
-					_List_fromArray(
-						[
-							$elm$html$Html$text('tweet about it')
+							A2(
+							$elm$html$Html$a,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('link'),
+									$elm$html$Html$Attributes$href(
+									$author$project$Generated$Route$toHref($author$project$Generated$Route$Projects_Index))
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text('projects')
+								]))
 						]))
 				]))
 		]));
@@ -12907,10 +13019,7 @@ var $author$project$Components$layout = function (_v0) {
 			[
 				A2(
 				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('column spacing--large pad--medium container h--fill')
-					]),
+				_List_Nil,
 				_List_fromArray(
 					[
 						$author$project$Components$navbar,
@@ -12918,7 +13027,7 @@ var $author$project$Components$layout = function (_v0) {
 						$elm$html$Html$div,
 						_List_fromArray(
 							[
-								$elm$html$Html$Attributes$class('column'),
+								$elm$html$Html$Attributes$class('container mx-auto'),
 								A2($elm$html$Html$Attributes$style, 'flex', '1 0 auto')
 							]),
 						page.body),
@@ -12959,4 +13068,4 @@ var $author$project$Main$view = function (model) {
 var $author$project$Main$main = $elm$browser$Browser$application(
 	{init: $author$project$Main$init, onUrlChange: $author$project$Main$UrlChanged, onUrlRequest: $author$project$Main$LinkClicked, subscriptions: $author$project$Main$subscriptions, update: $author$project$Main$update, view: $author$project$Main$view});
 _Platform_export({'Main':{'init':$author$project$Main$main(
-	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"},"Pages.Docs.Msg":{"args":[],"type":"Basics.Never"},"Pages.NotFound.Msg":{"args":[],"type":"Basics.Never"},"Pages.Top.Msg":{"args":[],"type":"Basics.Never"},"Graphql.Http.Error":{"args":["parsedData"],"type":"Graphql.Http.RawError parsedData Graphql.Http.HttpError"},"Pages.Projects.Index.Project":{"args":[],"type":"{ name : String.String }"},"Pages.Projects.Index.ProjectPage":{"args":[],"type":"{ data : List.List Pages.Projects.Index.Project }"},"Pages.Projects.Index.Response":{"args":[],"type":"{ projectPage : Pages.Projects.Index.ProjectPage }"},"Graphql.Http.GraphqlError.GraphqlError":{"args":[],"type":"{ message : String.String, locations : Maybe.Maybe (List.List Graphql.Http.GraphqlError.Location), details : Dict.Dict String.String Json.Decode.Value }"},"Graphql.Http.GraphqlError.Location":{"args":[],"type":"{ line : Basics.Int, column : Basics.Int }"},"Http.Metadata":{"args":[],"type":"{ url : String.String, statusCode : Basics.Int, statusText : String.String, headers : Dict.Dict String.String String.String }"},"Json.Decode.Value":{"args":[],"type":"Json.Encode.Value"}},"unions":{"Main.Msg":{"args":[],"tags":{"LinkClicked":["Browser.UrlRequest"],"UrlChanged":["Url.Url"],"Global":["Global.Msg"],"Page":["Generated.Pages.Msg"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Generated.Pages.Msg":{"args":[],"tags":{"Top_Msg":["Pages.Top.Msg"],"Docs_Msg":["Pages.Docs.Msg"],"NotFound_Msg":["Pages.NotFound.Msg"],"Projects_Index_Msg":["Pages.Projects.Index.Msg"]}},"Global.Msg":{"args":[],"tags":{"Navigate":["Generated.Route.Route"]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Pages.Projects.Index.Msg":{"args":[],"tags":{"NoOp":[],"GotResponse":["RemoteData.RemoteData (Graphql.Http.Error Pages.Projects.Index.Response) Pages.Projects.Index.Response"]}},"Basics.Never":{"args":[],"tags":{"JustOneMore":["Basics.Never"]}},"Generated.Route.Route":{"args":[],"tags":{"Top":[],"Docs":[],"NotFound":[],"Projects_Index":[]}},"Graphql.Http.HttpError":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Http.Metadata","String.String"],"BadPayload":["Json.Decode.Error"]}},"List.List":{"args":["a"],"tags":{}},"Graphql.Http.RawError":{"args":["parsedData","httpError"],"tags":{"GraphqlError":["Graphql.Http.GraphqlError.PossiblyParsedData parsedData","List.List Graphql.Http.GraphqlError.GraphqlError"],"HttpError":["httpError"]}},"RemoteData.RemoteData":{"args":["e","a"],"tags":{"NotAsked":[],"Loading":[],"Failure":["e"],"Success":["a"]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":[]}},"Json.Decode.Error":{"args":[],"tags":{"Field":["String.String","Json.Decode.Error"],"Index":["Basics.Int","Json.Decode.Error"],"OneOf":["List.List Json.Decode.Error"],"Failure":["String.String","Json.Decode.Value"]}},"Graphql.Http.GraphqlError.PossiblyParsedData":{"args":["parsed"],"tags":{"ParsedData":["parsed"],"UnparsedData":["Json.Decode.Value"]}},"Json.Encode.Value":{"args":[],"tags":{"Value":[]}},"Dict.NColor":{"args":[],"tags":{"Red":[],"Black":[]}}}}})}});}(this));
+	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"},"Pages.Docs.Msg":{"args":[],"type":"Basics.Never"},"Pages.NotFound.Msg":{"args":[],"type":"Basics.Never"},"Pages.Top.Msg":{"args":[],"type":"Basics.Never"},"Graphql.Http.Error":{"args":["parsedData"],"type":"Graphql.Http.RawError parsedData Graphql.Http.HttpError"},"Pages.Projects.Index.Project":{"args":[],"type":"{ name : String.String, description : String.String }"},"Pages.Projects.Index.ProjectPage":{"args":[],"type":"{ data : List.List Pages.Projects.Index.Project }"},"Pages.Projects.Index.Response":{"args":[],"type":"{ projectPage : Pages.Projects.Index.ProjectPage }"},"Graphql.Http.GraphqlError.GraphqlError":{"args":[],"type":"{ message : String.String, locations : Maybe.Maybe (List.List Graphql.Http.GraphqlError.Location), details : Dict.Dict String.String Json.Decode.Value }"},"Graphql.Http.GraphqlError.Location":{"args":[],"type":"{ line : Basics.Int, column : Basics.Int }"},"Http.Metadata":{"args":[],"type":"{ url : String.String, statusCode : Basics.Int, statusText : String.String, headers : Dict.Dict String.String String.String }"},"Json.Decode.Value":{"args":[],"type":"Json.Encode.Value"}},"unions":{"Main.Msg":{"args":[],"tags":{"LinkClicked":["Browser.UrlRequest"],"UrlChanged":["Url.Url"],"Global":["Global.Msg"],"Page":["Generated.Pages.Msg"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Generated.Pages.Msg":{"args":[],"tags":{"Top_Msg":["Pages.Top.Msg"],"Docs_Msg":["Pages.Docs.Msg"],"NotFound_Msg":["Pages.NotFound.Msg"],"Projects_Index_Msg":["Pages.Projects.Index.Msg"],"Projects_New_Msg":["Pages.Projects.New.Msg"]}},"Global.Msg":{"args":[],"tags":{"Navigate":["Generated.Route.Route"]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Pages.Projects.Index.Msg":{"args":[],"tags":{"NoOp":[],"GotResponse":["RemoteData.RemoteData (Graphql.Http.Error Pages.Projects.Index.Response) Pages.Projects.Index.Response"]}},"Pages.Projects.New.Msg":{"args":[],"tags":{"NoOp":[]}},"Basics.Never":{"args":[],"tags":{"JustOneMore":["Basics.Never"]}},"Generated.Route.Route":{"args":[],"tags":{"Top":[],"Docs":[],"NotFound":[],"Projects_Index":[],"Projects_New":[]}},"Graphql.Http.HttpError":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Http.Metadata","String.String"],"BadPayload":["Json.Decode.Error"]}},"List.List":{"args":["a"],"tags":{}},"Graphql.Http.RawError":{"args":["parsedData","httpError"],"tags":{"GraphqlError":["Graphql.Http.GraphqlError.PossiblyParsedData parsedData","List.List Graphql.Http.GraphqlError.GraphqlError"],"HttpError":["httpError"]}},"RemoteData.RemoteData":{"args":["e","a"],"tags":{"NotAsked":[],"Loading":[],"Failure":["e"],"Success":["a"]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":[]}},"Json.Decode.Error":{"args":[],"tags":{"Field":["String.String","Json.Decode.Error"],"Index":["Basics.Int","Json.Decode.Error"],"OneOf":["List.List Json.Decode.Error"],"Failure":["String.String","Json.Decode.Value"]}},"Graphql.Http.GraphqlError.PossiblyParsedData":{"args":["parsed"],"tags":{"ParsedData":["parsed"],"UnparsedData":["Json.Decode.Value"]}},"Json.Encode.Value":{"args":[],"tags":{"Value":[]}},"Dict.NColor":{"args":[],"tags":{"Red":[],"Black":[]}}}}})}});}(this));

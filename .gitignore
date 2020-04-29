@@ -7,3 +7,5 @@ node_modules
 src/Generated
 src/Api
 .envrc
+
+.DS_Store

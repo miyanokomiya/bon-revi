@@ -6,12 +6,14 @@ import Api.Object.Project
 import Api.Object.ProjectPage
 import Api.Query
 import Api.Scalar
+import Generated.Route as Route exposing (Route)
 import Global
 import Graphql.Document as Document
 import Graphql.Http
 import Graphql.Operation exposing (RootQuery)
 import Graphql.SelectionSet as SelectionSet exposing (SelectionSet)
 import Html exposing (Html)
+import Html.Attributes exposing (class, href)
 import Page exposing (Document, Page)
 import RemoteData exposing (RemoteData)
 
@@ -32,6 +34,7 @@ type alias Response =
 
 type alias Project =
     { name : String
+    , description : String
     }
 
 
@@ -50,8 +53,8 @@ query =
 projectSelection : SelectionSet Project Api.Object.Project
 projectSelection =
     SelectionSet.succeed Project
-        |> SelectionSet.with
-            Api.Object.Project.name
+        |> SelectionSet.with Api.Object.Project.name
+        |> SelectionSet.with Api.Object.Project.description
 
 
 projectPageSelection : SelectionSet ProjectPage Api.Object.ProjectPage
@@ -125,7 +128,8 @@ view global model =
                     RemoteData.Success response ->
                         viewResponse response
         in
-        [ Html.text "Projects.Index"
+        [ Html.a [ class "border py-2 px-4 bg-blue-500 text-white", href (Route.toHref Route.Projects_New) ] [ Html.text "New" ]
+        , Html.div [ class "mt-4 mb-2" ] [ Html.text "Project List" ]
         , message
         ]
     }
@@ -133,8 +137,12 @@ view global model =
 
 viewResponse : Response -> Html msg
 viewResponse response =
-    Html.div []
-        (List.map
-            (\prj -> Html.div [] [Html.text prj.name])
-            response.projectPage.data
-        )
+    Html.div [] (List.map viewProjectRow response.projectPage.data)
+
+
+viewProjectRow : Project -> Html msg
+viewProjectRow project =
+    Html.div [ class "py-2 px-4 border rounded mt-2 first:mt-0" ]
+        [ Html.div [ class "text-lg font-bold" ] [ Html.text project.name ]
+        , Html.div [ class "mt-1 border-t" ] [ Html.text project.description ]
+        ]
