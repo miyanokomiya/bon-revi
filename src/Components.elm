@@ -33,7 +33,7 @@ navbar =
 
 footer : Html msg
 footer =
-    Html.footer [ class "mt-4 py-2 border-t" ]
+    Html.footer [ class "mt-8 py-2 border-t" ]
         [ div
             [ class "container mx-auto" ]
             [ text "built with elm ❤" ]

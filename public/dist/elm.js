@@ -11579,6 +11579,7 @@ var $author$project$Pages$Projects$Index$query = A2(
 	$dillonkearns$elm_graphql$Graphql$SelectionSet$with,
 	A2($author$project$Api$Query$allProjects, $elm$core$Basics$identity, $author$project$Pages$Projects$Index$projectPageSelection),
 	$dillonkearns$elm_graphql$Graphql$SelectionSet$succeed($author$project$Pages$Projects$Index$Response));
+var $author$project$Request$path = 'https://graphql.fauna.com/graphql';
 var $dillonkearns$elm_graphql$Graphql$Http$Query = F2(
 	function (a, b) {
 		return {$: 'Query', a: a, b: b};
@@ -11605,6 +11606,9 @@ var $dillonkearns$elm_graphql$Graphql$Http$queryRequest = F2(
 				withCredentials: false
 			});
 	});
+var $author$project$Request$queryRequest = function (a) {
+	return A2($dillonkearns$elm_graphql$Graphql$Http$queryRequest, $author$project$Request$path, a);
+};
 var $elm$http$Http$Request = function (a) {
 	return {$: 'Request', a: a};
 };
@@ -12365,6 +12369,7 @@ var $dillonkearns$elm_graphql$Graphql$Http$send = F2(
 		return (request.withCredentials ? $elm$http$Http$riskyRequest : $elm$http$Http$request)(
 			A2($dillonkearns$elm_graphql$Graphql$Http$toHttpRequestRecord, resultToMessage, fullRequest));
 	});
+var $author$project$Request$secret = 'fnADqkZlYOACAcb9W51K0gni5dm2HH54g4hPNcP5';
 var $elm$http$Http$Header = F2(
 	function (a, b) {
 		return {$: 'Header', a: a, b: b};
@@ -12383,14 +12388,14 @@ var $dillonkearns$elm_graphql$Graphql$Http$withHeader = F3(
 						request.headers)
 				}));
 	});
+var $author$project$Request$withHeader = function (a) {
+	return A3($dillonkearns$elm_graphql$Graphql$Http$withHeader, 'authorization', 'Bearer ' + $author$project$Request$secret, a);
+};
 var $author$project$Pages$Projects$Index$execQuery = A2(
 	$dillonkearns$elm_graphql$Graphql$Http$send,
 	A2($elm$core$Basics$composeR, $krisajenkins$remotedata$RemoteData$fromResult, $author$project$Pages$Projects$Index$GotResponse),
-	A3(
-		$dillonkearns$elm_graphql$Graphql$Http$withHeader,
-		'authorization',
-		'Bearer fnADqkZlYOACAcb9W51K0gni5dm2HH54g4hPNcP5',
-		A2($dillonkearns$elm_graphql$Graphql$Http$queryRequest, 'https://graphql.fauna.com/graphql', $author$project$Pages$Projects$Index$query)));
+	$author$project$Request$withHeader(
+		$author$project$Request$queryRequest($author$project$Pages$Projects$Index$query)));
 var $author$project$Pages$Projects$Index$init = F2(
 	function (global, flags) {
 		return _Utils_Tuple3(
@@ -12542,7 +12547,7 @@ var $author$project$Pages$Projects$Index$view = F2(
 						message
 					]);
 			}(),
-			title: 'Projects.Index'
+			title: 'Project List'
 		};
 	});
 var $author$project$Pages$Projects$Index$page = $author$project$Page$component(
@@ -12575,23 +12580,500 @@ var $ryannhg$elm_spa$Spa$element = $ryannhg$elm_spa$Spa$Advanced$element;
 var $author$project$Page$element = $ryannhg$elm_spa$Spa$element;
 var $author$project$Pages$Projects$New$init = function (flags) {
 	return _Utils_Tuple2(
-		{},
+		{
+			projectInput: {description: '', name: ''},
+			response: $krisajenkins$remotedata$RemoteData$Loading
+		},
 		$elm$core$Platform$Cmd$none);
 };
 var $author$project$Pages$Projects$New$subscriptions = function (model) {
 	return $elm$core$Platform$Sub$none;
 };
+var $author$project$Pages$Projects$New$GotResponse = function (a) {
+	return {$: 'GotResponse', a: a};
+};
+var $author$project$Api$InputObject$ProjectInput = function (a) {
+	return {$: 'ProjectInput', a: a};
+};
+var $author$project$Pages$Projects$New$Response = function (project) {
+	return {project: project};
+};
+var $author$project$Api$Scalar$Date = function (a) {
+	return {$: 'Date', a: a};
+};
+var $author$project$Api$Scalar$Id = function (a) {
+	return {$: 'Id', a: a};
+};
+var $author$project$Api$Scalar$Long = function (a) {
+	return {$: 'Long', a: a};
+};
+var $author$project$Api$Scalar$Time = function (a) {
+	return {$: 'Time', a: a};
+};
+var $elm$json$Json$Decode$bool = _Json_decodeBool;
+var $dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$scalarDecoder = $elm$json$Json$Decode$oneOf(
+	_List_fromArray(
+		[
+			$elm$json$Json$Decode$string,
+			A2($elm$json$Json$Decode$map, $elm$core$String$fromFloat, $elm$json$Json$Decode$float),
+			A2($elm$json$Json$Decode$map, $elm$core$String$fromInt, $elm$json$Json$Decode$int),
+			A2(
+			$elm$json$Json$Decode$map,
+			function (bool) {
+				if (bool) {
+					return 'true';
+				} else {
+					return 'false';
+				}
+			},
+			$elm$json$Json$Decode$bool)
+		]));
+var $author$project$Api$Scalar$defaultCodecs = {
+	codecDate: {
+		decoder: A2($elm$json$Json$Decode$map, $author$project$Api$Scalar$Date, $dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$scalarDecoder),
+		encoder: function (_v0) {
+			var raw = _v0.a;
+			return $elm$json$Json$Encode$string(raw);
+		}
+	},
+	codecId: {
+		decoder: A2($elm$json$Json$Decode$map, $author$project$Api$Scalar$Id, $dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$scalarDecoder),
+		encoder: function (_v1) {
+			var raw = _v1.a;
+			return $elm$json$Json$Encode$string(raw);
+		}
+	},
+	codecLong: {
+		decoder: A2($elm$json$Json$Decode$map, $author$project$Api$Scalar$Long, $dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$scalarDecoder),
+		encoder: function (_v2) {
+			var raw = _v2.a;
+			return $elm$json$Json$Encode$string(raw);
+		}
+	},
+	codecTime: {
+		decoder: A2($elm$json$Json$Decode$map, $author$project$Api$Scalar$Time, $dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$scalarDecoder),
+		encoder: function (_v3) {
+			var raw = _v3.a;
+			return $elm$json$Json$Encode$string(raw);
+		}
+	}
+};
+var $author$project$Api$Scalar$Codecs = function (a) {
+	return {$: 'Codecs', a: a};
+};
+var $author$project$Api$Scalar$defineCodecs = function (definitions) {
+	return $author$project$Api$Scalar$Codecs(definitions);
+};
+var $author$project$Api$ScalarCodecs$codecs = $author$project$Api$Scalar$defineCodecs(
+	{codecDate: $author$project$Api$Scalar$defaultCodecs.codecDate, codecId: $author$project$Api$Scalar$defaultCodecs.codecId, codecLong: $author$project$Api$Scalar$defaultCodecs.codecLong, codecTime: $author$project$Api$Scalar$defaultCodecs.codecTime});
+var $dillonkearns$elm_graphql$Graphql$Internal$Encode$List = function (a) {
+	return {$: 'List', a: a};
+};
+var $dillonkearns$elm_graphql$Graphql$Internal$Encode$list = F2(
+	function (toValue, value) {
+		return $dillonkearns$elm_graphql$Graphql$Internal$Encode$List(
+			A2($elm$core$List$map, toValue, value));
+	});
+var $dillonkearns$elm_graphql$Graphql$Internal$Encode$maybe = function (encoder) {
+	return A2(
+		$elm$core$Basics$composeR,
+		$elm$core$Maybe$map(encoder),
+		$elm$core$Maybe$withDefault($dillonkearns$elm_graphql$Graphql$Internal$Encode$null));
+};
+var $dillonkearns$elm_graphql$Graphql$Internal$Encode$Object = function (a) {
+	return {$: 'Object', a: a};
+};
+var $dillonkearns$elm_graphql$Graphql$Internal$Encode$maybeObject = function (maybeValues) {
+	return $dillonkearns$elm_graphql$Graphql$Internal$Encode$Object(
+		A2(
+			$elm$core$List$filterMap,
+			function (_v0) {
+				var key = _v0.a;
+				var value = _v0.b;
+				if (value.$ === 'Just') {
+					var actualValue = value.a;
+					return $elm$core$Maybe$Just(
+						_Utils_Tuple2(key, actualValue));
+				} else {
+					return $elm$core$Maybe$Nothing;
+				}
+			},
+			maybeValues));
+};
+var $dillonkearns$elm_graphql$Graphql$Internal$Encode$optional = F2(
+	function (optionalValue, toValue) {
+		switch (optionalValue.$) {
+			case 'Present':
+				var value = optionalValue.a;
+				return $elm$core$Maybe$Just(
+					toValue(value));
+			case 'Absent':
+				return $elm$core$Maybe$Nothing;
+			default:
+				return $elm$core$Maybe$Just($dillonkearns$elm_graphql$Graphql$Internal$Encode$null);
+		}
+	});
+var $dillonkearns$elm_graphql$Graphql$Internal$Encode$fromJson = function (jsonValue) {
+	return $dillonkearns$elm_graphql$Graphql$Internal$Encode$Json(jsonValue);
+};
+var $author$project$Api$Scalar$unwrapEncoder = F2(
+	function (getter, _v0) {
+		var unwrappedCodecs = _v0.a;
+		return A2(
+			$elm$core$Basics$composeR,
+			getter(unwrappedCodecs).encoder,
+			$dillonkearns$elm_graphql$Graphql$Internal$Encode$fromJson);
+	});
+var $author$project$Api$InputObject$encodeFileInput = function (_v3) {
+	var input = _v3.a;
+	return $dillonkearns$elm_graphql$Graphql$Internal$Encode$maybeObject(
+		_List_fromArray(
+			[
+				_Utils_Tuple2(
+				'path',
+				$elm$core$Maybe$Just(
+					$dillonkearns$elm_graphql$Graphql$Internal$Encode$string(input.path))),
+				_Utils_Tuple2(
+				'description',
+				$elm$core$Maybe$Just(
+					$dillonkearns$elm_graphql$Graphql$Internal$Encode$string(input.description))),
+				_Utils_Tuple2(
+				'content',
+				$elm$core$Maybe$Just(
+					$dillonkearns$elm_graphql$Graphql$Internal$Encode$string(input.content))),
+				_Utils_Tuple2(
+				'project',
+				A2($dillonkearns$elm_graphql$Graphql$Internal$Encode$optional, input.project, $author$project$Api$InputObject$encodeFileProjectRelation))
+			]));
+};
+var $author$project$Api$InputObject$encodeFileProjectRelation = function (_v2) {
+	var input = _v2.a;
+	return $dillonkearns$elm_graphql$Graphql$Internal$Encode$maybeObject(
+		_List_fromArray(
+			[
+				_Utils_Tuple2(
+				'create',
+				A2($dillonkearns$elm_graphql$Graphql$Internal$Encode$optional, input.create, $author$project$Api$InputObject$encodeProjectInput)),
+				_Utils_Tuple2(
+				'connect',
+				A2(
+					$dillonkearns$elm_graphql$Graphql$Internal$Encode$optional,
+					input.connect,
+					A2(
+						$author$project$Api$Scalar$unwrapEncoder,
+						function ($) {
+							return $.codecId;
+						},
+						$author$project$Api$ScalarCodecs$codecs)))
+			]));
+};
+var $author$project$Api$InputObject$encodeProjectFilesRelation = function (_v1) {
+	var input = _v1.a;
+	return $dillonkearns$elm_graphql$Graphql$Internal$Encode$maybeObject(
+		_List_fromArray(
+			[
+				_Utils_Tuple2(
+				'create',
+				A2(
+					$dillonkearns$elm_graphql$Graphql$Internal$Encode$optional,
+					input.create,
+					$dillonkearns$elm_graphql$Graphql$Internal$Encode$list(
+						$dillonkearns$elm_graphql$Graphql$Internal$Encode$maybe($author$project$Api$InputObject$encodeFileInput)))),
+				_Utils_Tuple2(
+				'connect',
+				A2(
+					$dillonkearns$elm_graphql$Graphql$Internal$Encode$optional,
+					input.connect,
+					$dillonkearns$elm_graphql$Graphql$Internal$Encode$list(
+						$dillonkearns$elm_graphql$Graphql$Internal$Encode$maybe(
+							A2(
+								$author$project$Api$Scalar$unwrapEncoder,
+								function ($) {
+									return $.codecId;
+								},
+								$author$project$Api$ScalarCodecs$codecs))))),
+				_Utils_Tuple2(
+				'disconnect',
+				A2(
+					$dillonkearns$elm_graphql$Graphql$Internal$Encode$optional,
+					input.disconnect,
+					$dillonkearns$elm_graphql$Graphql$Internal$Encode$list(
+						$dillonkearns$elm_graphql$Graphql$Internal$Encode$maybe(
+							A2(
+								$author$project$Api$Scalar$unwrapEncoder,
+								function ($) {
+									return $.codecId;
+								},
+								$author$project$Api$ScalarCodecs$codecs)))))
+			]));
+};
+var $author$project$Api$InputObject$encodeProjectInput = function (_v0) {
+	var input = _v0.a;
+	return $dillonkearns$elm_graphql$Graphql$Internal$Encode$maybeObject(
+		_List_fromArray(
+			[
+				_Utils_Tuple2(
+				'name',
+				$elm$core$Maybe$Just(
+					$dillonkearns$elm_graphql$Graphql$Internal$Encode$string(input.name))),
+				_Utils_Tuple2(
+				'description',
+				$elm$core$Maybe$Just(
+					$dillonkearns$elm_graphql$Graphql$Internal$Encode$string(input.description))),
+				_Utils_Tuple2(
+				'files',
+				A2($dillonkearns$elm_graphql$Graphql$Internal$Encode$optional, input.files, $author$project$Api$InputObject$encodeProjectFilesRelation))
+			]));
+};
+var $dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required = F3(
+	function (fieldName, raw, encode) {
+		return A2(
+			$dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$Argument,
+			fieldName,
+			encode(raw));
+	});
+var $author$project$Api$Mutation$createProject = F2(
+	function (requiredArgs, object_) {
+		return A4(
+			$dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForCompositeField,
+			'createProject',
+			_List_fromArray(
+				[
+					A3($dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required, 'data', requiredArgs.data, $author$project$Api$InputObject$encodeProjectInput)
+				]),
+			object_,
+			$elm$core$Basics$identity);
+	});
+var $author$project$Pages$Projects$New$Project = F2(
+	function (name, description) {
+		return {description: description, name: name};
+	});
+var $author$project$Pages$Projects$New$projectSelection = A2(
+	$dillonkearns$elm_graphql$Graphql$SelectionSet$with,
+	$author$project$Api$Object$Project$description,
+	A2(
+		$dillonkearns$elm_graphql$Graphql$SelectionSet$with,
+		$author$project$Api$Object$Project$name,
+		$dillonkearns$elm_graphql$Graphql$SelectionSet$succeed($author$project$Pages$Projects$New$Project)));
+var $author$project$Pages$Projects$New$mutation = function (input) {
+	return A2(
+		$dillonkearns$elm_graphql$Graphql$SelectionSet$with,
+		A2(
+			$author$project$Api$Mutation$createProject,
+			{
+				data: $author$project$Api$InputObject$ProjectInput(
+					{description: input.description, files: $dillonkearns$elm_graphql$Graphql$OptionalArgument$Absent, name: input.name})
+			},
+			$author$project$Pages$Projects$New$projectSelection),
+		$dillonkearns$elm_graphql$Graphql$SelectionSet$succeed($author$project$Pages$Projects$New$Response));
+};
+var $dillonkearns$elm_graphql$Graphql$Http$Mutation = function (a) {
+	return {$: 'Mutation', a: a};
+};
+var $dillonkearns$elm_graphql$Graphql$Http$mutationRequest = F2(
+	function (baseUrl, mutationSelectionSet) {
+		return $dillonkearns$elm_graphql$Graphql$Http$Request(
+			{
+				baseUrl: baseUrl,
+				details: $dillonkearns$elm_graphql$Graphql$Http$Mutation(mutationSelectionSet),
+				expect: $dillonkearns$elm_graphql$Graphql$Document$decoder(mutationSelectionSet),
+				headers: _List_Nil,
+				operationName: $elm$core$Maybe$Nothing,
+				queryParams: _List_Nil,
+				timeout: $elm$core$Maybe$Nothing,
+				withCredentials: false
+			});
+	});
+var $author$project$Request$mutationRequest = function (a) {
+	return A2($dillonkearns$elm_graphql$Graphql$Http$mutationRequest, $author$project$Request$path, a);
+};
+var $author$project$Pages$Projects$New$makeRequest = function (input) {
+	return A2(
+		$dillonkearns$elm_graphql$Graphql$Http$send,
+		A2($elm$core$Basics$composeR, $krisajenkins$remotedata$RemoteData$fromResult, $author$project$Pages$Projects$New$GotResponse),
+		$author$project$Request$withHeader(
+			$author$project$Request$mutationRequest(
+				$author$project$Pages$Projects$New$mutation(input))));
+};
 var $author$project$Pages$Projects$New$update = F2(
 	function (msg, model) {
-		return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+		var projectInput = model.projectInput;
+		switch (msg.$) {
+			case 'NoOp':
+				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+			case 'InputName':
+				var val = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							projectInput: _Utils_update(
+								projectInput,
+								{name: val})
+						}),
+					$elm$core$Platform$Cmd$none);
+			case 'InputDescription':
+				var val = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							projectInput: _Utils_update(
+								projectInput,
+								{description: val})
+						}),
+					$elm$core$Platform$Cmd$none);
+			case 'Submit':
+				return _Utils_Tuple2(
+					model,
+					$author$project$Pages$Projects$New$makeRequest(projectInput));
+			default:
+				var response = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							projectInput: _Utils_update(
+								projectInput,
+								{description: '', name: ''}),
+							response: response
+						}),
+					$elm$core$Platform$Cmd$none);
+		}
 	});
+var $author$project$Pages$Projects$New$InputDescription = function (a) {
+	return {$: 'InputDescription', a: a};
+};
+var $author$project$Pages$Projects$New$InputName = function (a) {
+	return {$: 'InputName', a: a};
+};
+var $author$project$Pages$Projects$New$Submit = {$: 'Submit'};
+var $elm$html$Html$form = _VirtualDom_node('form');
+var $elm$html$Html$h2 = _VirtualDom_node('h2');
+var $elm$html$Html$Events$alwaysPreventDefault = function (msg) {
+	return _Utils_Tuple2(msg, true);
+};
+var $elm$virtual_dom$VirtualDom$MayPreventDefault = function (a) {
+	return {$: 'MayPreventDefault', a: a};
+};
+var $elm$html$Html$Events$preventDefaultOn = F2(
+	function (event, decoder) {
+		return A2(
+			$elm$virtual_dom$VirtualDom$on,
+			event,
+			$elm$virtual_dom$VirtualDom$MayPreventDefault(decoder));
+	});
+var $elm$html$Html$Events$onSubmit = function (msg) {
+	return A2(
+		$elm$html$Html$Events$preventDefaultOn,
+		'submit',
+		A2(
+			$elm$json$Json$Decode$map,
+			$elm$html$Html$Events$alwaysPreventDefault,
+			$elm$json$Json$Decode$succeed(msg)));
+};
+var $elm$html$Html$textarea = _VirtualDom_node('textarea');
+var $elm$html$Html$label = _VirtualDom_node('label');
+var $author$project$Pages$Projects$New$viewLabel = function (text) {
+	return A2(
+		$elm$html$Html$label,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('mb-1 w-full block')
+			]),
+		_List_fromArray(
+			[
+				$elm$html$Html$text(text)
+			]));
+};
 var $author$project$Pages$Projects$New$view = function (model) {
 	return {
 		body: _List_fromArray(
 			[
-				$elm$html$Html$text('Projects.New')
+				A2(
+				$elm$html$Html$div,
+				_List_Nil,
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$form,
+						_List_fromArray(
+							[
+								$elm$html$Html$Events$onSubmit($author$project$Pages$Projects$New$Submit)
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$h2,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('mb-4 text-xl')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('New Project')
+									])),
+								A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('mb-2')
+									]),
+								_List_fromArray(
+									[
+										$author$project$Pages$Projects$New$viewLabel('Name'),
+										A2(
+										$elm$html$Html$input,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$value(model.projectInput.name),
+												$elm$html$Html$Events$onInput($author$project$Pages$Projects$New$InputName),
+												$elm$html$Html$Attributes$class('w-full py-2 px-4 border rounded')
+											]),
+										_List_Nil)
+									])),
+								A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('mb-2')
+									]),
+								_List_fromArray(
+									[
+										$author$project$Pages$Projects$New$viewLabel('Description'),
+										A2(
+										$elm$html$Html$textarea,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$value(model.projectInput.description),
+												$elm$html$Html$Events$onInput($author$project$Pages$Projects$New$InputDescription),
+												$elm$html$Html$Attributes$class('w-full py-2 px-4 border rounded')
+											]),
+										_List_Nil)
+									])),
+								A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('text-right')
+									]),
+								_List_fromArray(
+									[
+										A2(
+										$elm$html$Html$button,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$class('border py-2 px-4 bg-blue-500 text-white')
+											]),
+										_List_fromArray(
+											[
+												$elm$html$Html$text('Create')
+											]))
+									]))
+							]))
+					]))
 			]),
-		title: 'Projects.New'
+		title: 'New Project'
 	};
 };
 var $author$project$Pages$Projects$New$page = $author$project$Page$element(
@@ -12945,7 +13427,7 @@ var $author$project$Components$footer = A2(
 	$elm$html$Html$footer,
 	_List_fromArray(
 		[
-			$elm$html$Html$Attributes$class('mt-4 py-2 border-t')
+			$elm$html$Html$Attributes$class('mt-8 py-2 border-t')
 		]),
 	_List_fromArray(
 		[
@@ -13068,4 +13550,4 @@ var $author$project$Main$view = function (model) {
 var $author$project$Main$main = $elm$browser$Browser$application(
 	{init: $author$project$Main$init, onUrlChange: $author$project$Main$UrlChanged, onUrlRequest: $author$project$Main$LinkClicked, subscriptions: $author$project$Main$subscriptions, update: $author$project$Main$update, view: $author$project$Main$view});
 _Platform_export({'Main':{'init':$author$project$Main$main(
-	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"},"Pages.Docs.Msg":{"args":[],"type":"Basics.Never"},"Pages.NotFound.Msg":{"args":[],"type":"Basics.Never"},"Pages.Top.Msg":{"args":[],"type":"Basics.Never"},"Graphql.Http.Error":{"args":["parsedData"],"type":"Graphql.Http.RawError parsedData Graphql.Http.HttpError"},"Pages.Projects.Index.Project":{"args":[],"type":"{ name : String.String, description : String.String }"},"Pages.Projects.Index.ProjectPage":{"args":[],"type":"{ data : List.List Pages.Projects.Index.Project }"},"Pages.Projects.Index.Response":{"args":[],"type":"{ projectPage : Pages.Projects.Index.ProjectPage }"},"Graphql.Http.GraphqlError.GraphqlError":{"args":[],"type":"{ message : String.String, locations : Maybe.Maybe (List.List Graphql.Http.GraphqlError.Location), details : Dict.Dict String.String Json.Decode.Value }"},"Graphql.Http.GraphqlError.Location":{"args":[],"type":"{ line : Basics.Int, column : Basics.Int }"},"Http.Metadata":{"args":[],"type":"{ url : String.String, statusCode : Basics.Int, statusText : String.String, headers : Dict.Dict String.String String.String }"},"Json.Decode.Value":{"args":[],"type":"Json.Encode.Value"}},"unions":{"Main.Msg":{"args":[],"tags":{"LinkClicked":["Browser.UrlRequest"],"UrlChanged":["Url.Url"],"Global":["Global.Msg"],"Page":["Generated.Pages.Msg"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Generated.Pages.Msg":{"args":[],"tags":{"Top_Msg":["Pages.Top.Msg"],"Docs_Msg":["Pages.Docs.Msg"],"NotFound_Msg":["Pages.NotFound.Msg"],"Projects_Index_Msg":["Pages.Projects.Index.Msg"],"Projects_New_Msg":["Pages.Projects.New.Msg"]}},"Global.Msg":{"args":[],"tags":{"Navigate":["Generated.Route.Route"]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Pages.Projects.Index.Msg":{"args":[],"tags":{"NoOp":[],"GotResponse":["RemoteData.RemoteData (Graphql.Http.Error Pages.Projects.Index.Response) Pages.Projects.Index.Response"]}},"Pages.Projects.New.Msg":{"args":[],"tags":{"NoOp":[]}},"Basics.Never":{"args":[],"tags":{"JustOneMore":["Basics.Never"]}},"Generated.Route.Route":{"args":[],"tags":{"Top":[],"Docs":[],"NotFound":[],"Projects_Index":[],"Projects_New":[]}},"Graphql.Http.HttpError":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Http.Metadata","String.String"],"BadPayload":["Json.Decode.Error"]}},"List.List":{"args":["a"],"tags":{}},"Graphql.Http.RawError":{"args":["parsedData","httpError"],"tags":{"GraphqlError":["Graphql.Http.GraphqlError.PossiblyParsedData parsedData","List.List Graphql.Http.GraphqlError.GraphqlError"],"HttpError":["httpError"]}},"RemoteData.RemoteData":{"args":["e","a"],"tags":{"NotAsked":[],"Loading":[],"Failure":["e"],"Success":["a"]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":[]}},"Json.Decode.Error":{"args":[],"tags":{"Field":["String.String","Json.Decode.Error"],"Index":["Basics.Int","Json.Decode.Error"],"OneOf":["List.List Json.Decode.Error"],"Failure":["String.String","Json.Decode.Value"]}},"Graphql.Http.GraphqlError.PossiblyParsedData":{"args":["parsed"],"tags":{"ParsedData":["parsed"],"UnparsedData":["Json.Decode.Value"]}},"Json.Encode.Value":{"args":[],"tags":{"Value":[]}},"Dict.NColor":{"args":[],"tags":{"Red":[],"Black":[]}}}}})}});}(this));
+	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"},"Pages.Docs.Msg":{"args":[],"type":"Basics.Never"},"Pages.NotFound.Msg":{"args":[],"type":"Basics.Never"},"Pages.Top.Msg":{"args":[],"type":"Basics.Never"},"Graphql.Http.Error":{"args":["parsedData"],"type":"Graphql.Http.RawError parsedData Graphql.Http.HttpError"},"Pages.Projects.Index.Project":{"args":[],"type":"{ name : String.String, description : String.String }"},"Pages.Projects.New.Project":{"args":[],"type":"{ name : String.String, description : String.String }"},"Pages.Projects.Index.ProjectPage":{"args":[],"type":"{ data : List.List Pages.Projects.Index.Project }"},"Pages.Projects.Index.Response":{"args":[],"type":"{ projectPage : Pages.Projects.Index.ProjectPage }"},"Pages.Projects.New.Response":{"args":[],"type":"{ project : Pages.Projects.New.Project }"},"Graphql.Http.GraphqlError.GraphqlError":{"args":[],"type":"{ message : String.String, locations : Maybe.Maybe (List.List Graphql.Http.GraphqlError.Location), details : Dict.Dict String.String Json.Decode.Value }"},"Graphql.Http.GraphqlError.Location":{"args":[],"type":"{ line : Basics.Int, column : Basics.Int }"},"Http.Metadata":{"args":[],"type":"{ url : String.String, statusCode : Basics.Int, statusText : String.String, headers : Dict.Dict String.String String.String }"},"Json.Decode.Value":{"args":[],"type":"Json.Encode.Value"}},"unions":{"Main.Msg":{"args":[],"tags":{"LinkClicked":["Browser.UrlRequest"],"UrlChanged":["Url.Url"],"Global":["Global.Msg"],"Page":["Generated.Pages.Msg"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Generated.Pages.Msg":{"args":[],"tags":{"Top_Msg":["Pages.Top.Msg"],"Docs_Msg":["Pages.Docs.Msg"],"NotFound_Msg":["Pages.NotFound.Msg"],"Projects_Index_Msg":["Pages.Projects.Index.Msg"],"Projects_New_Msg":["Pages.Projects.New.Msg"]}},"Global.Msg":{"args":[],"tags":{"Navigate":["Generated.Route.Route"]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Pages.Projects.Index.Msg":{"args":[],"tags":{"NoOp":[],"GotResponse":["RemoteData.RemoteData (Graphql.Http.Error Pages.Projects.Index.Response) Pages.Projects.Index.Response"]}},"Pages.Projects.New.Msg":{"args":[],"tags":{"NoOp":[],"InputName":["String.String"],"InputDescription":["String.String"],"Submit":[],"GotResponse":["RemoteData.RemoteData (Graphql.Http.Error Pages.Projects.New.Response) Pages.Projects.New.Response"]}},"Basics.Never":{"args":[],"tags":{"JustOneMore":["Basics.Never"]}},"Generated.Route.Route":{"args":[],"tags":{"Top":[],"Docs":[],"NotFound":[],"Projects_Index":[],"Projects_New":[]}},"Graphql.Http.HttpError":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Http.Metadata","String.String"],"BadPayload":["Json.Decode.Error"]}},"List.List":{"args":["a"],"tags":{}},"Graphql.Http.RawError":{"args":["parsedData","httpError"],"tags":{"GraphqlError":["Graphql.Http.GraphqlError.PossiblyParsedData parsedData","List.List Graphql.Http.GraphqlError.GraphqlError"],"HttpError":["httpError"]}},"RemoteData.RemoteData":{"args":["e","a"],"tags":{"NotAsked":[],"Loading":[],"Failure":["e"],"Success":["a"]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":[]}},"Json.Decode.Error":{"args":[],"tags":{"Field":["String.String","Json.Decode.Error"],"Index":["Basics.Int","Json.Decode.Error"],"OneOf":["List.List Json.Decode.Error"],"Failure":["String.String","Json.Decode.Value"]}},"Graphql.Http.GraphqlError.PossiblyParsedData":{"args":["parsed"],"tags":{"ParsedData":["parsed"],"UnparsedData":["Json.Decode.Value"]}},"Json.Encode.Value":{"args":[],"tags":{"Value":[]}},"Dict.NColor":{"args":[],"tags":{"Red":[],"Black":[]}}}}})}});}(this));

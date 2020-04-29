@@ -1,14 +1,11 @@
 module Pages.Projects.Index exposing (Flags, Model, Msg, page)
 
-import Api.Interface
 import Api.Object
 import Api.Object.Project
 import Api.Object.ProjectPage
 import Api.Query
-import Api.Scalar
-import Generated.Route as Route exposing (Route)
+import Generated.Route as Route
 import Global
-import Graphql.Document as Document
 import Graphql.Http
 import Graphql.Operation exposing (RootQuery)
 import Graphql.SelectionSet as SelectionSet exposing (SelectionSet)
@@ -16,6 +13,7 @@ import Html exposing (Html)
 import Html.Attributes exposing (class, href)
 import Page exposing (Document, Page)
 import RemoteData exposing (RemoteData)
+import Request
 
 
 type alias Flags =
@@ -69,8 +67,8 @@ projectPageSelection =
 execQuery : Cmd Msg
 execQuery =
     query
-        |> Graphql.Http.queryRequest "https://graphql.fauna.com/graphql"
-        |> Graphql.Http.withHeader "authorization" "Bearer fnADqkZlYOACAcb9W51K0gni5dm2HH54g4hPNcP5"
+        |> Request.queryRequest
+        |> Request.withHeader
         |> Graphql.Http.send (RemoteData.fromResult >> GotResponse)
 
 
@@ -111,7 +109,7 @@ subscriptions global model =
 
 view : Global.Model -> Model -> Document Msg
 view global model =
-    { title = "Projects.Index"
+    { title = "Project List"
     , body =
         let
             message =
