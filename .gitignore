@@ -6,6 +6,7 @@ repl-temp-*
 node_modules
 src/Generated
 src/Api
+public/dist
 .envrc
 
 .DS_Store
