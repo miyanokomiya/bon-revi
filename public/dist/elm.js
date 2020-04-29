@@ -10966,8 +10966,11 @@ var $elm$url$Url$Parser$parse = F2(
 					$elm$core$Basics$identity)));
 	});
 var $author$project$Generated$Route$Docs = {$: 'Docs'};
-var $author$project$Generated$Route$Projects_Index = {$: 'Projects_Index'};
+var $author$project$Generated$Route$Projects_Dynamic = function (a) {
+	return {$: 'Projects_Dynamic', a: a};
+};
 var $author$project$Generated$Route$Projects_New = {$: 'Projects_New'};
+var $author$project$Generated$Route$Projects_Top = {$: 'Projects_Top'};
 var $author$project$Generated$Route$Top = {$: 'Top'};
 var $elm$url$Url$Parser$Parser = function (a) {
 	return {$: 'Parser', a: a};
@@ -11054,6 +11057,40 @@ var $elm$url$Url$Parser$slash = F2(
 					parseBefore(state));
 			});
 	});
+var $elm$url$Url$Parser$custom = F2(
+	function (tipe, stringToSomething) {
+		return $elm$url$Url$Parser$Parser(
+			function (_v0) {
+				var visited = _v0.visited;
+				var unvisited = _v0.unvisited;
+				var params = _v0.params;
+				var frag = _v0.frag;
+				var value = _v0.value;
+				if (!unvisited.b) {
+					return _List_Nil;
+				} else {
+					var next = unvisited.a;
+					var rest = unvisited.b;
+					var _v2 = stringToSomething(next);
+					if (_v2.$ === 'Just') {
+						var nextValue = _v2.a;
+						return _List_fromArray(
+							[
+								A5(
+								$elm$url$Url$Parser$State,
+								A2($elm$core$List$cons, next, visited),
+								rest,
+								params,
+								frag,
+								value(nextValue))
+							]);
+					} else {
+						return _List_Nil;
+					}
+				}
+			});
+	});
+var $elm$url$Url$Parser$string = A2($elm$url$Url$Parser$custom, 'STRING', $elm$core$Maybe$Just);
 var $elm$url$Url$Parser$top = $elm$url$Url$Parser$Parser(
 	function (state) {
 		return _List_fromArray(
@@ -11073,18 +11110,27 @@ var $author$project$Generated$Route$routes = $elm$url$Url$Parser$oneOf(
 			$elm$url$Url$Parser$s('not-found')),
 			A2(
 			$elm$url$Url$Parser$map,
-			$author$project$Generated$Route$Projects_Index,
-			A2(
-				$elm$url$Url$Parser$slash,
-				$elm$url$Url$Parser$s('projects'),
-				$elm$url$Url$Parser$s('index'))),
+			$author$project$Generated$Route$Projects_Top,
+			$elm$url$Url$Parser$s('projects')),
 			A2(
 			$elm$url$Url$Parser$map,
 			$author$project$Generated$Route$Projects_New,
 			A2(
 				$elm$url$Url$Parser$slash,
 				$elm$url$Url$Parser$s('projects'),
-				$elm$url$Url$Parser$s('new')))
+				$elm$url$Url$Parser$s('new'))),
+			A2(
+			$elm$url$Url$Parser$map,
+			$author$project$Generated$Route$Projects_Dynamic,
+			A2(
+				$elm$url$Url$Parser$map,
+				function (param1) {
+					return {param1: param1};
+				},
+				A2(
+					$elm$url$Url$Parser$slash,
+					$elm$url$Url$Parser$s('projects'),
+					$elm$url$Url$Parser$string)))
 		]));
 var $author$project$Generated$Route$fromUrl = $elm$url$Url$Parser$parse($author$project$Generated$Route$routes);
 var $author$project$Main$fromUrl = A2(
@@ -11103,17 +11149,23 @@ var $author$project$Generated$Pages$NotFound_Model = function (a) {
 var $author$project$Generated$Pages$NotFound_Msg = function (a) {
 	return {$: 'NotFound_Msg', a: a};
 };
-var $author$project$Generated$Pages$Projects_Index_Model = function (a) {
-	return {$: 'Projects_Index_Model', a: a};
+var $author$project$Generated$Pages$Projects_Dynamic_Model = function (a) {
+	return {$: 'Projects_Dynamic_Model', a: a};
 };
-var $author$project$Generated$Pages$Projects_Index_Msg = function (a) {
-	return {$: 'Projects_Index_Msg', a: a};
+var $author$project$Generated$Pages$Projects_Dynamic_Msg = function (a) {
+	return {$: 'Projects_Dynamic_Msg', a: a};
 };
 var $author$project$Generated$Pages$Projects_New_Model = function (a) {
 	return {$: 'Projects_New_Model', a: a};
 };
 var $author$project$Generated$Pages$Projects_New_Msg = function (a) {
 	return {$: 'Projects_New_Msg', a: a};
+};
+var $author$project$Generated$Pages$Projects_Top_Model = function (a) {
+	return {$: 'Projects_Top_Model', a: a};
+};
+var $author$project$Generated$Pages$Projects_Top_Msg = function (a) {
+	return {$: 'Projects_Top_Msg', a: a};
 };
 var $author$project$Generated$Pages$Top_Model = function (a) {
 	return {$: 'Top_Model', a: a};
@@ -11163,11 +11215,37 @@ var $author$project$Pages$NotFound$view = {
 };
 var $author$project$Pages$NotFound$page = $author$project$Page$static(
 	{view: $author$project$Pages$NotFound$view});
-var $ryannhg$elm_spa$Spa$Advanced$component = $elm$core$Basics$identity;
-var $ryannhg$elm_spa$Spa$component = $ryannhg$elm_spa$Spa$Advanced$component;
-var $author$project$Page$component = $ryannhg$elm_spa$Spa$component;
+var $ryannhg$elm_spa$Spa$Advanced$element = function (page) {
+	return {
+		init: F2(
+			function (_v0, flags) {
+				return function (_v1) {
+					var model = _v1.a;
+					var cmd = _v1.b;
+					return _Utils_Tuple3(model, cmd, $elm$core$Platform$Cmd$none);
+				}(
+					page.init(flags));
+			}),
+		subscriptions: $elm$core$Basics$always(page.subscriptions),
+		update: F3(
+			function (_v2, msg, model) {
+				return function (_v3) {
+					var model_ = _v3.a;
+					var cmd = _v3.b;
+					return _Utils_Tuple3(model_, cmd, $elm$core$Platform$Cmd$none);
+				}(
+					A2(page.update, msg, model));
+			}),
+		view: $elm$core$Basics$always(page.view)
+	};
+};
+var $ryannhg$elm_spa$Spa$element = $ryannhg$elm_spa$Spa$Advanced$element;
+var $author$project$Page$element = $ryannhg$elm_spa$Spa$element;
+var $author$project$Api$Scalar$Id = function (a) {
+	return {$: 'Id', a: a};
+};
 var $krisajenkins$remotedata$RemoteData$Loading = {$: 'Loading'};
-var $author$project$Pages$Projects$Index$GotResponse = function (a) {
+var $author$project$Pages$Projects$Dynamic$GotResponse = function (a) {
 	return {$: 'GotResponse', a: a};
 };
 var $krisajenkins$remotedata$RemoteData$Failure = function (a) {
@@ -11185,40 +11263,94 @@ var $krisajenkins$remotedata$RemoteData$fromResult = function (result) {
 		return $krisajenkins$remotedata$RemoteData$Success(x);
 	}
 };
-var $author$project$Pages$Projects$Index$Response = function (projectPage) {
-	return {projectPage: projectPage};
+var $author$project$Pages$Projects$Dynamic$Response = function (maybeProject) {
+	return {maybeProject: maybeProject};
 };
-var $dillonkearns$elm_graphql$Graphql$OptionalArgument$Absent = {$: 'Absent'};
-var $dillonkearns$elm_graphql$Graphql$Internal$Encode$Json = function (a) {
-	return {$: 'Json', a: a};
+var $author$project$Api$Scalar$Date = function (a) {
+	return {$: 'Date', a: a};
 };
-var $elm$json$Json$Encode$int = _Json_wrap;
-var $dillonkearns$elm_graphql$Graphql$Internal$Encode$int = function (value) {
-	return $dillonkearns$elm_graphql$Graphql$Internal$Encode$Json(
-		$elm$json$Json$Encode$int(value));
+var $author$project$Api$Scalar$Long = function (a) {
+	return {$: 'Long', a: a};
+};
+var $author$project$Api$Scalar$Time = function (a) {
+	return {$: 'Time', a: a};
+};
+var $elm$json$Json$Decode$bool = _Json_decodeBool;
+var $elm$json$Json$Decode$oneOf = _Json_oneOf;
+var $dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$scalarDecoder = $elm$json$Json$Decode$oneOf(
+	_List_fromArray(
+		[
+			$elm$json$Json$Decode$string,
+			A2($elm$json$Json$Decode$map, $elm$core$String$fromFloat, $elm$json$Json$Decode$float),
+			A2($elm$json$Json$Decode$map, $elm$core$String$fromInt, $elm$json$Json$Decode$int),
+			A2(
+			$elm$json$Json$Decode$map,
+			function (bool) {
+				if (bool) {
+					return 'true';
+				} else {
+					return 'false';
+				}
+			},
+			$elm$json$Json$Decode$bool)
+		]));
+var $author$project$Api$Scalar$defaultCodecs = {
+	codecDate: {
+		decoder: A2($elm$json$Json$Decode$map, $author$project$Api$Scalar$Date, $dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$scalarDecoder),
+		encoder: function (_v0) {
+			var raw = _v0.a;
+			return $elm$json$Json$Encode$string(raw);
+		}
+	},
+	codecId: {
+		decoder: A2($elm$json$Json$Decode$map, $author$project$Api$Scalar$Id, $dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$scalarDecoder),
+		encoder: function (_v1) {
+			var raw = _v1.a;
+			return $elm$json$Json$Encode$string(raw);
+		}
+	},
+	codecLong: {
+		decoder: A2($elm$json$Json$Decode$map, $author$project$Api$Scalar$Long, $dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$scalarDecoder),
+		encoder: function (_v2) {
+			var raw = _v2.a;
+			return $elm$json$Json$Encode$string(raw);
+		}
+	},
+	codecTime: {
+		decoder: A2($elm$json$Json$Decode$map, $author$project$Api$Scalar$Time, $dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$scalarDecoder),
+		encoder: function (_v3) {
+			var raw = _v3.a;
+			return $elm$json$Json$Encode$string(raw);
+		}
+	}
+};
+var $author$project$Api$Scalar$Codecs = function (a) {
+	return {$: 'Codecs', a: a};
+};
+var $author$project$Api$Scalar$defineCodecs = function (definitions) {
+	return $author$project$Api$Scalar$Codecs(definitions);
+};
+var $author$project$Api$ScalarCodecs$codecs = $author$project$Api$Scalar$defineCodecs(
+	{codecDate: $author$project$Api$Scalar$defaultCodecs.codecDate, codecId: $author$project$Api$Scalar$defaultCodecs.codecId, codecLong: $author$project$Api$Scalar$defaultCodecs.codecLong, codecTime: $author$project$Api$Scalar$defaultCodecs.codecTime});
+var $elm$json$Json$Decode$null = _Json_decodeNull;
+var $elm$json$Json$Decode$nullable = function (decoder) {
+	return $elm$json$Json$Decode$oneOf(
+		_List_fromArray(
+			[
+				$elm$json$Json$Decode$null($elm$core$Maybe$Nothing),
+				A2($elm$json$Json$Decode$map, $elm$core$Maybe$Just, decoder)
+			]));
 };
 var $dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$Argument = F2(
 	function (a, b) {
 		return {$: 'Argument', a: a, b: b};
 	});
-var $elm$json$Json$Encode$null = _Json_encodeNull;
-var $dillonkearns$elm_graphql$Graphql$Internal$Encode$null = $dillonkearns$elm_graphql$Graphql$Internal$Encode$Json($elm$json$Json$Encode$null);
-var $dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$optional = F3(
-	function (fieldName, maybeValue, toValue) {
-		switch (maybeValue.$) {
-			case 'Present':
-				var value = maybeValue.a;
-				return $elm$core$Maybe$Just(
-					A2(
-						$dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$Argument,
-						fieldName,
-						toValue(value)));
-			case 'Absent':
-				return $elm$core$Maybe$Nothing;
-			default:
-				return $elm$core$Maybe$Just(
-					A2($dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$Argument, fieldName, $dillonkearns$elm_graphql$Graphql$Internal$Encode$null));
-		}
+var $dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required = F3(
+	function (fieldName, raw, encode) {
+		return A2(
+			$dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$Argument,
+			fieldName,
+			encode(raw));
 	});
 var $dillonkearns$elm_graphql$Graphql$SelectionSet$SelectionSet = F2(
 	function (a, b) {
@@ -11435,91 +11567,44 @@ var $dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForCompos
 					A3($dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$composite, fieldName, args, fields)),
 				decoderTransform(decoder)));
 	});
-var $dillonkearns$elm_graphql$Graphql$Internal$Encode$string = function (value) {
-	return $dillonkearns$elm_graphql$Graphql$Internal$Encode$Json(
-		$elm$json$Json$Encode$string(value));
+var $dillonkearns$elm_graphql$Graphql$Internal$Encode$Json = function (a) {
+	return {$: 'Json', a: a};
 };
-var $author$project$Api$Query$allProjects = F2(
-	function (fillInOptionals, object_) {
-		var filledInOptionals = fillInOptionals(
-			{cursor_: $dillonkearns$elm_graphql$Graphql$OptionalArgument$Absent, size_: $dillonkearns$elm_graphql$Graphql$OptionalArgument$Absent});
-		var optionalArgs = A2(
-			$elm$core$List$filterMap,
-			$elm$core$Basics$identity,
+var $dillonkearns$elm_graphql$Graphql$Internal$Encode$fromJson = function (jsonValue) {
+	return $dillonkearns$elm_graphql$Graphql$Internal$Encode$Json(jsonValue);
+};
+var $author$project$Api$Scalar$unwrapEncoder = F2(
+	function (getter, _v0) {
+		var unwrappedCodecs = _v0.a;
+		return A2(
+			$elm$core$Basics$composeR,
+			getter(unwrappedCodecs).encoder,
+			$dillonkearns$elm_graphql$Graphql$Internal$Encode$fromJson);
+	});
+var $author$project$Api$Query$findProjectByID = F2(
+	function (requiredArgs, object_) {
+		return A4(
+			$dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForCompositeField,
+			'findProjectByID',
 			_List_fromArray(
 				[
-					A3($dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$optional, '_size', filledInOptionals.size_, $dillonkearns$elm_graphql$Graphql$Internal$Encode$int),
-					A3($dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$optional, '_cursor', filledInOptionals.cursor_, $dillonkearns$elm_graphql$Graphql$Internal$Encode$string)
-				]));
-		return A4($dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForCompositeField, 'allProjects', optionalArgs, object_, $elm$core$Basics$identity);
+					A3(
+					$dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required,
+					'id',
+					requiredArgs.id,
+					A2(
+						$author$project$Api$Scalar$unwrapEncoder,
+						function ($) {
+							return $.codecId;
+						},
+						$author$project$Api$ScalarCodecs$codecs))
+				]),
+			object_,
+			A2($elm$core$Basics$composeR, $elm$core$Basics$identity, $elm$json$Json$Decode$nullable));
 	});
-var $author$project$Pages$Projects$Index$ProjectPage = function (data) {
-	return {data: data};
-};
-var $elm$json$Json$Decode$null = _Json_decodeNull;
-var $elm$json$Json$Decode$oneOf = _Json_oneOf;
-var $elm$json$Json$Decode$nullable = function (decoder) {
-	return $elm$json$Json$Decode$oneOf(
-		_List_fromArray(
-			[
-				$elm$json$Json$Decode$null($elm$core$Maybe$Nothing),
-				A2($elm$json$Json$Decode$map, $elm$core$Maybe$Just, decoder)
-			]));
-};
-var $author$project$Api$Object$ProjectPage$data = function (object_) {
-	return A4(
-		$dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForCompositeField,
-		'data',
-		_List_Nil,
-		object_,
-		A2(
-			$elm$core$Basics$composeR,
-			$elm$core$Basics$identity,
-			A2($elm$core$Basics$composeR, $elm$json$Json$Decode$nullable, $elm$json$Json$Decode$list)));
-};
-var $elm$json$Json$Decode$andThen = _Json_andThen;
-var $dillonkearns$elm_graphql$Graphql$SelectionSet$combineMaybeList = function (listOfMaybes) {
-	var step = F2(
-		function (maybeElement, accumulator) {
-			if (maybeElement.$ === 'Nothing') {
-				return $elm$core$Maybe$Nothing;
-			} else {
-				var element = maybeElement.a;
-				return A2(
-					$elm$core$Maybe$map,
-					$elm$core$List$cons(element),
-					accumulator);
-			}
-		});
-	return A3(
-		$elm$core$List$foldr,
-		step,
-		$elm$core$Maybe$Just(_List_Nil),
-		listOfMaybes);
-};
-var $elm$json$Json$Decode$fail = _Json_fail;
-var $dillonkearns$elm_graphql$Graphql$SelectionSet$nonNullElementsOrFail = function (_v0) {
-	var fields = _v0.a;
-	var decoder = _v0.b;
-	return A2(
-		$dillonkearns$elm_graphql$Graphql$SelectionSet$SelectionSet,
-		fields,
-		A2(
-			$elm$json$Json$Decode$andThen,
-			function (result) {
-				var _v1 = $dillonkearns$elm_graphql$Graphql$SelectionSet$combineMaybeList(result);
-				if (_v1.$ === 'Nothing') {
-					return $elm$json$Json$Decode$fail('Expected only non-null list elements but found a null. Check for calls to nonNullElementsOrFail in your code. Ideally your schema should indicate that this is non-nullable so you don\'t need to use nonNullElementsOrFail at all.');
-				} else {
-					var listWithoutNulls = _v1.a;
-					return $elm$json$Json$Decode$succeed(listWithoutNulls);
-				}
-			},
-			decoder));
-};
-var $author$project$Pages$Projects$Index$Project = F2(
-	function (name, description) {
-		return {description: description, name: name};
+var $author$project$Pages$Projects$Dynamic$Project = F3(
+	function (id_, name, description) {
+		return {description: description, id_: id_, name: name};
 	});
 var $dillonkearns$elm_graphql$Graphql$RawField$Leaf = F2(
 	function (a, b) {
@@ -11545,6 +11630,16 @@ var $dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField 
 				decoder));
 	});
 var $author$project$Api$Object$Project$description = A4($dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField, 'String', 'description', _List_Nil, $elm$json$Json$Decode$string);
+var $author$project$Api$Scalar$unwrapCodecs = function (_v0) {
+	var unwrappedCodecs = _v0.a;
+	return unwrappedCodecs;
+};
+var $author$project$Api$Object$Project$id_ = A4(
+	$dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField,
+	'ScalarCodecs.Id',
+	'_id',
+	_List_Nil,
+	$author$project$Api$Scalar$unwrapCodecs($author$project$Api$ScalarCodecs$codecs).codecId.decoder);
 var $author$project$Api$Object$Project$name = A4($dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField, 'String', 'name', _List_Nil, $elm$json$Json$Decode$string);
 var $dillonkearns$elm_graphql$Graphql$SelectionSet$succeed = function (constructor) {
 	return A2(
@@ -11563,22 +11658,25 @@ var $dillonkearns$elm_graphql$Graphql$SelectionSet$with = F2(
 			_Utils_ap(selectionFields1, selectionFields2),
 			A3($elm$json$Json$Decode$map2, $elm$core$Basics$apR, selectionDecoder1, selectionDecoder2));
 	});
-var $author$project$Pages$Projects$Index$projectSelection = A2(
+var $author$project$Pages$Projects$Dynamic$projectSelection = A2(
 	$dillonkearns$elm_graphql$Graphql$SelectionSet$with,
 	$author$project$Api$Object$Project$description,
 	A2(
 		$dillonkearns$elm_graphql$Graphql$SelectionSet$with,
 		$author$project$Api$Object$Project$name,
-		$dillonkearns$elm_graphql$Graphql$SelectionSet$succeed($author$project$Pages$Projects$Index$Project)));
-var $author$project$Pages$Projects$Index$projectPageSelection = A2(
-	$dillonkearns$elm_graphql$Graphql$SelectionSet$with,
-	$dillonkearns$elm_graphql$Graphql$SelectionSet$nonNullElementsOrFail(
-		$author$project$Api$Object$ProjectPage$data($author$project$Pages$Projects$Index$projectSelection)),
-	$dillonkearns$elm_graphql$Graphql$SelectionSet$succeed($author$project$Pages$Projects$Index$ProjectPage));
-var $author$project$Pages$Projects$Index$query = A2(
-	$dillonkearns$elm_graphql$Graphql$SelectionSet$with,
-	A2($author$project$Api$Query$allProjects, $elm$core$Basics$identity, $author$project$Pages$Projects$Index$projectPageSelection),
-	$dillonkearns$elm_graphql$Graphql$SelectionSet$succeed($author$project$Pages$Projects$Index$Response));
+		A2(
+			$dillonkearns$elm_graphql$Graphql$SelectionSet$with,
+			$author$project$Api$Object$Project$id_,
+			$dillonkearns$elm_graphql$Graphql$SelectionSet$succeed($author$project$Pages$Projects$Dynamic$Project))));
+var $author$project$Pages$Projects$Dynamic$query = function (id) {
+	return A2(
+		$dillonkearns$elm_graphql$Graphql$SelectionSet$with,
+		A2(
+			$author$project$Api$Query$findProjectByID,
+			{id: id},
+			$author$project$Pages$Projects$Dynamic$projectSelection),
+		$dillonkearns$elm_graphql$Graphql$SelectionSet$succeed($author$project$Pages$Projects$Dynamic$Response));
+};
 var $author$project$Request$path = 'https://graphql.fauna.com/graphql';
 var $dillonkearns$elm_graphql$Graphql$Http$Query = F2(
 	function (a, b) {
@@ -12166,6 +12264,7 @@ var $dillonkearns$elm_graphql$Graphql$Http$GraphqlError$ParsedData = function (a
 var $dillonkearns$elm_graphql$Graphql$Http$GraphqlError$UnparsedData = function (a) {
 	return {$: 'UnparsedData', a: a};
 };
+var $elm$json$Json$Decode$andThen = _Json_andThen;
 var $dillonkearns$elm_graphql$Graphql$Http$GraphqlError$GraphqlError = F3(
 	function (message, locations, details) {
 		return {details: details, locations: locations, message: message};
@@ -12391,193 +12490,154 @@ var $dillonkearns$elm_graphql$Graphql$Http$withHeader = F3(
 var $author$project$Request$withHeader = function (a) {
 	return A3($dillonkearns$elm_graphql$Graphql$Http$withHeader, 'authorization', 'Bearer ' + $author$project$Request$secret, a);
 };
-var $author$project$Pages$Projects$Index$execQuery = A2(
-	$dillonkearns$elm_graphql$Graphql$Http$send,
-	A2($elm$core$Basics$composeR, $krisajenkins$remotedata$RemoteData$fromResult, $author$project$Pages$Projects$Index$GotResponse),
-	$author$project$Request$withHeader(
-		$author$project$Request$queryRequest($author$project$Pages$Projects$Index$query)));
-var $author$project$Pages$Projects$Index$init = F2(
-	function (global, flags) {
-		return _Utils_Tuple3(
-			{data: $krisajenkins$remotedata$RemoteData$Loading},
-			$author$project$Pages$Projects$Index$execQuery,
-			$elm$core$Platform$Cmd$none);
-	});
-var $author$project$Pages$Projects$Index$subscriptions = F2(
-	function (global, model) {
-		return $elm$core$Platform$Sub$none;
-	});
-var $author$project$Pages$Projects$Index$update = F3(
-	function (global, msg, model) {
+var $author$project$Pages$Projects$Dynamic$execQuery = function (id) {
+	return A2(
+		$dillonkearns$elm_graphql$Graphql$Http$send,
+		A2($elm$core$Basics$composeR, $krisajenkins$remotedata$RemoteData$fromResult, $author$project$Pages$Projects$Dynamic$GotResponse),
+		$author$project$Request$withHeader(
+			$author$project$Request$queryRequest(
+				$author$project$Pages$Projects$Dynamic$query(id))));
+};
+var $author$project$Pages$Projects$Dynamic$init = function (flags) {
+	var id = $author$project$Api$Scalar$Id(flags.param1);
+	return _Utils_Tuple2(
+		{data: $krisajenkins$remotedata$RemoteData$Loading, id: id},
+		$author$project$Pages$Projects$Dynamic$execQuery(id));
+};
+var $author$project$Pages$Projects$Dynamic$subscriptions = function (model) {
+	return $elm$core$Platform$Sub$none;
+};
+var $author$project$Pages$Projects$Dynamic$update = F2(
+	function (msg, model) {
 		if (msg.$ === 'NoOp') {
-			return _Utils_Tuple3(model, $elm$core$Platform$Cmd$none, $elm$core$Platform$Cmd$none);
+			return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 		} else {
 			var response = msg.a;
-			return _Utils_Tuple3(
+			return _Utils_Tuple2(
 				_Utils_update(
 					model,
 					{data: response}),
-				$elm$core$Platform$Cmd$none,
 				$elm$core$Platform$Cmd$none);
 		}
 	});
-var $elm$core$String$append = _String_append;
-var $author$project$Generated$Route$toHref = function (route) {
-	var segments = function () {
-		switch (route.$) {
-			case 'Top':
-				return _List_Nil;
-			case 'Docs':
-				return _List_fromArray(
-					['docs']);
-			case 'NotFound':
-				return _List_fromArray(
-					['not-found']);
-			case 'Projects_Index':
-				return _List_fromArray(
-					['projects', 'index']);
-			default:
-				return _List_fromArray(
-					['projects', 'new']);
-		}
-	}();
-	return A2(
-		$elm$core$String$append,
-		'/',
-		A2($elm$core$String$join, '/', segments));
-};
-var $author$project$Pages$Projects$Index$viewProjectRow = function (project) {
+var $elm$html$Html$h2 = _VirtualDom_node('h2');
+var $elm$html$Html$pre = _VirtualDom_node('pre');
+var $author$project$Pages$Projects$Dynamic$viewProject = function (project) {
 	return A2(
 		$elm$html$Html$div,
-		_List_fromArray(
-			[
-				$elm$html$Html$Attributes$class('py-2 px-4 border rounded mt-2 first:mt-0')
-			]),
+		_List_Nil,
 		_List_fromArray(
 			[
 				A2(
 				$elm$html$Html$div,
 				_List_fromArray(
 					[
-						$elm$html$Html$Attributes$class('text-lg font-bold')
+						$elm$html$Html$Attributes$class('mb-2 pb-1 flex border-b-2 text-xl')
 					]),
 				_List_fromArray(
 					[
-						$elm$html$Html$text(project.name)
+						A2(
+						$elm$html$Html$p,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('w-32')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Project:')
+							])),
+						A2(
+						$elm$html$Html$h2,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text(project.name)
+							]))
 					])),
 				A2(
 				$elm$html$Html$div,
 				_List_fromArray(
 					[
-						$elm$html$Html$Attributes$class('mt-1 border-t')
+						$elm$html$Html$Attributes$class('flex')
 					]),
 				_List_fromArray(
 					[
-						$elm$html$Html$text(project.description)
+						A2(
+						$elm$html$Html$p,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('w-32')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Description:')
+							])),
+						A2(
+						$elm$html$Html$pre,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text(project.description)
+							]))
 					]))
 			]));
 };
-var $author$project$Pages$Projects$Index$viewResponse = function (response) {
-	return A2(
-		$elm$html$Html$div,
-		_List_Nil,
-		A2($elm$core$List$map, $author$project$Pages$Projects$Index$viewProjectRow, response.projectPage.data));
-};
-var $author$project$Pages$Projects$Index$view = F2(
-	function (global, model) {
-		return {
-			body: function () {
-				var message = function () {
-					var _v0 = model.data;
-					switch (_v0.$) {
-						case 'NotAsked':
-							return A2(
-								$elm$html$Html$div,
-								_List_Nil,
-								_List_fromArray(
-									[
-										$elm$html$Html$text('Not Asked')
-									]));
-						case 'Loading':
-							return A2(
-								$elm$html$Html$div,
-								_List_Nil,
-								_List_fromArray(
-									[
-										$elm$html$Html$text('Loading')
-									]));
-						case 'Failure':
-							var e = _v0.a;
-							return A2(
-								$elm$html$Html$div,
-								_List_Nil,
-								_List_fromArray(
-									[
-										$elm$html$Html$text('Failure')
-									]));
-						default:
-							var response = _v0.a;
-							return $author$project$Pages$Projects$Index$viewResponse(response);
-					}
-				}();
-				return _List_fromArray(
-					[
-						A2(
-						$elm$html$Html$a,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('border py-2 px-4 bg-blue-500 text-white'),
-								$elm$html$Html$Attributes$href(
-								$author$project$Generated$Route$toHref($author$project$Generated$Route$Projects_New))
-							]),
-						_List_fromArray(
-							[
-								$elm$html$Html$text('New')
-							])),
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('mt-4 mb-2')
-							]),
-						_List_fromArray(
-							[
-								$elm$html$Html$text('Project List')
-							])),
-						message
-					]);
-			}(),
-			title: 'Project List'
-		};
-	});
-var $author$project$Pages$Projects$Index$page = $author$project$Page$component(
-	{init: $author$project$Pages$Projects$Index$init, subscriptions: $author$project$Pages$Projects$Index$subscriptions, update: $author$project$Pages$Projects$Index$update, view: $author$project$Pages$Projects$Index$view});
-var $ryannhg$elm_spa$Spa$Advanced$element = function (page) {
+var $author$project$Pages$Projects$Dynamic$view = function (model) {
 	return {
-		init: F2(
-			function (_v0, flags) {
-				return function (_v1) {
-					var model = _v1.a;
-					var cmd = _v1.b;
-					return _Utils_Tuple3(model, cmd, $elm$core$Platform$Cmd$none);
-				}(
-					page.init(flags));
-			}),
-		subscriptions: $elm$core$Basics$always(page.subscriptions),
-		update: F3(
-			function (_v2, msg, model) {
-				return function (_v3) {
-					var model_ = _v3.a;
-					var cmd = _v3.b;
-					return _Utils_Tuple3(model_, cmd, $elm$core$Platform$Cmd$none);
-				}(
-					A2(page.update, msg, model));
-			}),
-		view: $elm$core$Basics$always(page.view)
+		body: function () {
+			var content = function () {
+				var _v0 = model.data;
+				switch (_v0.$) {
+					case 'NotAsked':
+						return A2(
+							$elm$html$Html$div,
+							_List_Nil,
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Not Asked')
+								]));
+					case 'Loading':
+						return A2(
+							$elm$html$Html$div,
+							_List_Nil,
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Loading')
+								]));
+					case 'Failure':
+						var e = _v0.a;
+						return A2(
+							$elm$html$Html$div,
+							_List_Nil,
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Failure')
+								]));
+					default:
+						var response = _v0.a;
+						var _v1 = response.maybeProject;
+						if (_v1.$ === 'Just') {
+							var project = _v1.a;
+							return $author$project$Pages$Projects$Dynamic$viewProject(project);
+						} else {
+							return A2(
+								$elm$html$Html$div,
+								_List_Nil,
+								_List_fromArray(
+									[
+										$elm$html$Html$text('Not Found')
+									]));
+						}
+				}
+			}();
+			return _List_fromArray(
+				[content]);
+		}(),
+		title: 'Projects.Dynamic'
 	};
 };
-var $ryannhg$elm_spa$Spa$element = $ryannhg$elm_spa$Spa$Advanced$element;
-var $author$project$Page$element = $ryannhg$elm_spa$Spa$element;
+var $author$project$Pages$Projects$Dynamic$page = $author$project$Page$element(
+	{init: $author$project$Pages$Projects$Dynamic$init, subscriptions: $author$project$Pages$Projects$Dynamic$subscriptions, update: $author$project$Pages$Projects$Dynamic$update, view: $author$project$Pages$Projects$Dynamic$view});
 var $author$project$Pages$Projects$New$init = function (flags) {
 	return _Utils_Tuple2(
 		{
@@ -12592,80 +12652,13 @@ var $author$project$Pages$Projects$New$subscriptions = function (model) {
 var $author$project$Pages$Projects$New$GotResponse = function (a) {
 	return {$: 'GotResponse', a: a};
 };
+var $dillonkearns$elm_graphql$Graphql$OptionalArgument$Absent = {$: 'Absent'};
 var $author$project$Api$InputObject$ProjectInput = function (a) {
 	return {$: 'ProjectInput', a: a};
 };
 var $author$project$Pages$Projects$New$Response = function (project) {
 	return {project: project};
 };
-var $author$project$Api$Scalar$Date = function (a) {
-	return {$: 'Date', a: a};
-};
-var $author$project$Api$Scalar$Id = function (a) {
-	return {$: 'Id', a: a};
-};
-var $author$project$Api$Scalar$Long = function (a) {
-	return {$: 'Long', a: a};
-};
-var $author$project$Api$Scalar$Time = function (a) {
-	return {$: 'Time', a: a};
-};
-var $elm$json$Json$Decode$bool = _Json_decodeBool;
-var $dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$scalarDecoder = $elm$json$Json$Decode$oneOf(
-	_List_fromArray(
-		[
-			$elm$json$Json$Decode$string,
-			A2($elm$json$Json$Decode$map, $elm$core$String$fromFloat, $elm$json$Json$Decode$float),
-			A2($elm$json$Json$Decode$map, $elm$core$String$fromInt, $elm$json$Json$Decode$int),
-			A2(
-			$elm$json$Json$Decode$map,
-			function (bool) {
-				if (bool) {
-					return 'true';
-				} else {
-					return 'false';
-				}
-			},
-			$elm$json$Json$Decode$bool)
-		]));
-var $author$project$Api$Scalar$defaultCodecs = {
-	codecDate: {
-		decoder: A2($elm$json$Json$Decode$map, $author$project$Api$Scalar$Date, $dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$scalarDecoder),
-		encoder: function (_v0) {
-			var raw = _v0.a;
-			return $elm$json$Json$Encode$string(raw);
-		}
-	},
-	codecId: {
-		decoder: A2($elm$json$Json$Decode$map, $author$project$Api$Scalar$Id, $dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$scalarDecoder),
-		encoder: function (_v1) {
-			var raw = _v1.a;
-			return $elm$json$Json$Encode$string(raw);
-		}
-	},
-	codecLong: {
-		decoder: A2($elm$json$Json$Decode$map, $author$project$Api$Scalar$Long, $dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$scalarDecoder),
-		encoder: function (_v2) {
-			var raw = _v2.a;
-			return $elm$json$Json$Encode$string(raw);
-		}
-	},
-	codecTime: {
-		decoder: A2($elm$json$Json$Decode$map, $author$project$Api$Scalar$Time, $dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$scalarDecoder),
-		encoder: function (_v3) {
-			var raw = _v3.a;
-			return $elm$json$Json$Encode$string(raw);
-		}
-	}
-};
-var $author$project$Api$Scalar$Codecs = function (a) {
-	return {$: 'Codecs', a: a};
-};
-var $author$project$Api$Scalar$defineCodecs = function (definitions) {
-	return $author$project$Api$Scalar$Codecs(definitions);
-};
-var $author$project$Api$ScalarCodecs$codecs = $author$project$Api$Scalar$defineCodecs(
-	{codecDate: $author$project$Api$Scalar$defaultCodecs.codecDate, codecId: $author$project$Api$Scalar$defaultCodecs.codecId, codecLong: $author$project$Api$Scalar$defaultCodecs.codecLong, codecTime: $author$project$Api$Scalar$defaultCodecs.codecTime});
 var $dillonkearns$elm_graphql$Graphql$Internal$Encode$List = function (a) {
 	return {$: 'List', a: a};
 };
@@ -12674,6 +12667,8 @@ var $dillonkearns$elm_graphql$Graphql$Internal$Encode$list = F2(
 		return $dillonkearns$elm_graphql$Graphql$Internal$Encode$List(
 			A2($elm$core$List$map, toValue, value));
 	});
+var $elm$json$Json$Encode$null = _Json_encodeNull;
+var $dillonkearns$elm_graphql$Graphql$Internal$Encode$null = $dillonkearns$elm_graphql$Graphql$Internal$Encode$Json($elm$json$Json$Encode$null);
 var $dillonkearns$elm_graphql$Graphql$Internal$Encode$maybe = function (encoder) {
 	return A2(
 		$elm$core$Basics$composeR,
@@ -12713,17 +12708,10 @@ var $dillonkearns$elm_graphql$Graphql$Internal$Encode$optional = F2(
 				return $elm$core$Maybe$Just($dillonkearns$elm_graphql$Graphql$Internal$Encode$null);
 		}
 	});
-var $dillonkearns$elm_graphql$Graphql$Internal$Encode$fromJson = function (jsonValue) {
-	return $dillonkearns$elm_graphql$Graphql$Internal$Encode$Json(jsonValue);
+var $dillonkearns$elm_graphql$Graphql$Internal$Encode$string = function (value) {
+	return $dillonkearns$elm_graphql$Graphql$Internal$Encode$Json(
+		$elm$json$Json$Encode$string(value));
 };
-var $author$project$Api$Scalar$unwrapEncoder = F2(
-	function (getter, _v0) {
-		var unwrappedCodecs = _v0.a;
-		return A2(
-			$elm$core$Basics$composeR,
-			getter(unwrappedCodecs).encoder,
-			$dillonkearns$elm_graphql$Graphql$Internal$Encode$fromJson);
-	});
 var $author$project$Api$InputObject$encodeFileInput = function (_v3) {
 	var input = _v3.a;
 	return $dillonkearns$elm_graphql$Graphql$Internal$Encode$maybeObject(
@@ -12825,13 +12813,6 @@ var $author$project$Api$InputObject$encodeProjectInput = function (_v0) {
 				A2($dillonkearns$elm_graphql$Graphql$Internal$Encode$optional, input.files, $author$project$Api$InputObject$encodeProjectFilesRelation))
 			]));
 };
-var $dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required = F3(
-	function (fieldName, raw, encode) {
-		return A2(
-			$dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$Argument,
-			fieldName,
-			encode(raw));
-	});
 var $author$project$Api$Mutation$createProject = F2(
 	function (requiredArgs, object_) {
 		return A4(
@@ -12949,7 +12930,6 @@ var $author$project$Pages$Projects$New$InputName = function (a) {
 };
 var $author$project$Pages$Projects$New$Submit = {$: 'Submit'};
 var $elm$html$Html$form = _VirtualDom_node('form');
-var $elm$html$Html$h2 = _VirtualDom_node('h2');
 var $elm$html$Html$Events$alwaysPreventDefault = function (msg) {
 	return _Utils_Tuple2(msg, true);
 };
@@ -13078,6 +13058,301 @@ var $author$project$Pages$Projects$New$view = function (model) {
 };
 var $author$project$Pages$Projects$New$page = $author$project$Page$element(
 	{init: $author$project$Pages$Projects$New$init, subscriptions: $author$project$Pages$Projects$New$subscriptions, update: $author$project$Pages$Projects$New$update, view: $author$project$Pages$Projects$New$view});
+var $ryannhg$elm_spa$Spa$Advanced$component = $elm$core$Basics$identity;
+var $ryannhg$elm_spa$Spa$component = $ryannhg$elm_spa$Spa$Advanced$component;
+var $author$project$Page$component = $ryannhg$elm_spa$Spa$component;
+var $author$project$Pages$Projects$Top$GotResponse = function (a) {
+	return {$: 'GotResponse', a: a};
+};
+var $author$project$Pages$Projects$Top$Response = function (projectPage) {
+	return {projectPage: projectPage};
+};
+var $elm$json$Json$Encode$int = _Json_wrap;
+var $dillonkearns$elm_graphql$Graphql$Internal$Encode$int = function (value) {
+	return $dillonkearns$elm_graphql$Graphql$Internal$Encode$Json(
+		$elm$json$Json$Encode$int(value));
+};
+var $dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$optional = F3(
+	function (fieldName, maybeValue, toValue) {
+		switch (maybeValue.$) {
+			case 'Present':
+				var value = maybeValue.a;
+				return $elm$core$Maybe$Just(
+					A2(
+						$dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$Argument,
+						fieldName,
+						toValue(value)));
+			case 'Absent':
+				return $elm$core$Maybe$Nothing;
+			default:
+				return $elm$core$Maybe$Just(
+					A2($dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$Argument, fieldName, $dillonkearns$elm_graphql$Graphql$Internal$Encode$null));
+		}
+	});
+var $author$project$Api$Query$allProjects = F2(
+	function (fillInOptionals, object_) {
+		var filledInOptionals = fillInOptionals(
+			{cursor_: $dillonkearns$elm_graphql$Graphql$OptionalArgument$Absent, size_: $dillonkearns$elm_graphql$Graphql$OptionalArgument$Absent});
+		var optionalArgs = A2(
+			$elm$core$List$filterMap,
+			$elm$core$Basics$identity,
+			_List_fromArray(
+				[
+					A3($dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$optional, '_size', filledInOptionals.size_, $dillonkearns$elm_graphql$Graphql$Internal$Encode$int),
+					A3($dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$optional, '_cursor', filledInOptionals.cursor_, $dillonkearns$elm_graphql$Graphql$Internal$Encode$string)
+				]));
+		return A4($dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForCompositeField, 'allProjects', optionalArgs, object_, $elm$core$Basics$identity);
+	});
+var $author$project$Pages$Projects$Top$ProjectPage = function (data) {
+	return {data: data};
+};
+var $author$project$Api$Object$ProjectPage$data = function (object_) {
+	return A4(
+		$dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForCompositeField,
+		'data',
+		_List_Nil,
+		object_,
+		A2(
+			$elm$core$Basics$composeR,
+			$elm$core$Basics$identity,
+			A2($elm$core$Basics$composeR, $elm$json$Json$Decode$nullable, $elm$json$Json$Decode$list)));
+};
+var $dillonkearns$elm_graphql$Graphql$SelectionSet$combineMaybeList = function (listOfMaybes) {
+	var step = F2(
+		function (maybeElement, accumulator) {
+			if (maybeElement.$ === 'Nothing') {
+				return $elm$core$Maybe$Nothing;
+			} else {
+				var element = maybeElement.a;
+				return A2(
+					$elm$core$Maybe$map,
+					$elm$core$List$cons(element),
+					accumulator);
+			}
+		});
+	return A3(
+		$elm$core$List$foldr,
+		step,
+		$elm$core$Maybe$Just(_List_Nil),
+		listOfMaybes);
+};
+var $elm$json$Json$Decode$fail = _Json_fail;
+var $dillonkearns$elm_graphql$Graphql$SelectionSet$nonNullElementsOrFail = function (_v0) {
+	var fields = _v0.a;
+	var decoder = _v0.b;
+	return A2(
+		$dillonkearns$elm_graphql$Graphql$SelectionSet$SelectionSet,
+		fields,
+		A2(
+			$elm$json$Json$Decode$andThen,
+			function (result) {
+				var _v1 = $dillonkearns$elm_graphql$Graphql$SelectionSet$combineMaybeList(result);
+				if (_v1.$ === 'Nothing') {
+					return $elm$json$Json$Decode$fail('Expected only non-null list elements but found a null. Check for calls to nonNullElementsOrFail in your code. Ideally your schema should indicate that this is non-nullable so you don\'t need to use nonNullElementsOrFail at all.');
+				} else {
+					var listWithoutNulls = _v1.a;
+					return $elm$json$Json$Decode$succeed(listWithoutNulls);
+				}
+			},
+			decoder));
+};
+var $author$project$Pages$Projects$Top$Project = F3(
+	function (id_, name, description) {
+		return {description: description, id_: id_, name: name};
+	});
+var $author$project$Pages$Projects$Top$projectSelection = A2(
+	$dillonkearns$elm_graphql$Graphql$SelectionSet$with,
+	$author$project$Api$Object$Project$description,
+	A2(
+		$dillonkearns$elm_graphql$Graphql$SelectionSet$with,
+		$author$project$Api$Object$Project$name,
+		A2(
+			$dillonkearns$elm_graphql$Graphql$SelectionSet$with,
+			$author$project$Api$Object$Project$id_,
+			$dillonkearns$elm_graphql$Graphql$SelectionSet$succeed($author$project$Pages$Projects$Top$Project))));
+var $author$project$Pages$Projects$Top$projectPageSelection = A2(
+	$dillonkearns$elm_graphql$Graphql$SelectionSet$with,
+	$dillonkearns$elm_graphql$Graphql$SelectionSet$nonNullElementsOrFail(
+		$author$project$Api$Object$ProjectPage$data($author$project$Pages$Projects$Top$projectSelection)),
+	$dillonkearns$elm_graphql$Graphql$SelectionSet$succeed($author$project$Pages$Projects$Top$ProjectPage));
+var $author$project$Pages$Projects$Top$query = A2(
+	$dillonkearns$elm_graphql$Graphql$SelectionSet$with,
+	A2($author$project$Api$Query$allProjects, $elm$core$Basics$identity, $author$project$Pages$Projects$Top$projectPageSelection),
+	$dillonkearns$elm_graphql$Graphql$SelectionSet$succeed($author$project$Pages$Projects$Top$Response));
+var $author$project$Pages$Projects$Top$execQuery = A2(
+	$dillonkearns$elm_graphql$Graphql$Http$send,
+	A2($elm$core$Basics$composeR, $krisajenkins$remotedata$RemoteData$fromResult, $author$project$Pages$Projects$Top$GotResponse),
+	$author$project$Request$withHeader(
+		$author$project$Request$queryRequest($author$project$Pages$Projects$Top$query)));
+var $author$project$Pages$Projects$Top$init = F2(
+	function (global, flags) {
+		return _Utils_Tuple3(
+			{data: $krisajenkins$remotedata$RemoteData$Loading},
+			$author$project$Pages$Projects$Top$execQuery,
+			$elm$core$Platform$Cmd$none);
+	});
+var $author$project$Pages$Projects$Top$subscriptions = F2(
+	function (global, model) {
+		return $elm$core$Platform$Sub$none;
+	});
+var $author$project$Pages$Projects$Top$update = F3(
+	function (global, msg, model) {
+		if (msg.$ === 'NoOp') {
+			return _Utils_Tuple3(model, $elm$core$Platform$Cmd$none, $elm$core$Platform$Cmd$none);
+		} else {
+			var response = msg.a;
+			return _Utils_Tuple3(
+				_Utils_update(
+					model,
+					{data: response}),
+				$elm$core$Platform$Cmd$none,
+				$elm$core$Platform$Cmd$none);
+		}
+	});
+var $elm$core$String$append = _String_append;
+var $author$project$Generated$Route$toHref = function (route) {
+	var segments = function () {
+		switch (route.$) {
+			case 'Top':
+				return _List_Nil;
+			case 'Docs':
+				return _List_fromArray(
+					['docs']);
+			case 'NotFound':
+				return _List_fromArray(
+					['not-found']);
+			case 'Projects_Top':
+				return _List_fromArray(
+					['projects']);
+			case 'Projects_New':
+				return _List_fromArray(
+					['projects', 'new']);
+			default:
+				var param1 = route.a.param1;
+				return _List_fromArray(
+					['projects', param1]);
+		}
+	}();
+	return A2(
+		$elm$core$String$append,
+		'/',
+		A2($elm$core$String$join, '/', segments));
+};
+var $author$project$Pages$Projects$Top$viewProjectRow = function (project) {
+	var id = function () {
+		var _v0 = project.id_;
+		var i = _v0.a;
+		return i;
+	}();
+	return A2(
+		$elm$html$Html$a,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$href(
+				$author$project$Generated$Route$toHref(
+					$author$project$Generated$Route$Projects_Dynamic(
+						{param1: id}))),
+				$elm$html$Html$Attributes$class('block py-2 px-4 border rounded mt-2 first:mt-0')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('text-lg font-bold')
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text(project.name)
+					])),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('mt-1 border-t')
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text(project.description)
+					]))
+			]));
+};
+var $author$project$Pages$Projects$Top$viewResponse = function (response) {
+	return A2(
+		$elm$html$Html$div,
+		_List_Nil,
+		A2($elm$core$List$map, $author$project$Pages$Projects$Top$viewProjectRow, response.projectPage.data));
+};
+var $author$project$Pages$Projects$Top$view = F2(
+	function (global, model) {
+		return {
+			body: function () {
+				var message = function () {
+					var _v0 = model.data;
+					switch (_v0.$) {
+						case 'NotAsked':
+							return A2(
+								$elm$html$Html$div,
+								_List_Nil,
+								_List_fromArray(
+									[
+										$elm$html$Html$text('Not Asked')
+									]));
+						case 'Loading':
+							return A2(
+								$elm$html$Html$div,
+								_List_Nil,
+								_List_fromArray(
+									[
+										$elm$html$Html$text('Loading')
+									]));
+						case 'Failure':
+							var e = _v0.a;
+							return A2(
+								$elm$html$Html$div,
+								_List_Nil,
+								_List_fromArray(
+									[
+										$elm$html$Html$text('Failure')
+									]));
+						default:
+							var response = _v0.a;
+							return $author$project$Pages$Projects$Top$viewResponse(response);
+					}
+				}();
+				return _List_fromArray(
+					[
+						A2(
+						$elm$html$Html$a,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('border py-2 px-4 bg-blue-500 text-white'),
+								$elm$html$Html$Attributes$href(
+								$author$project$Generated$Route$toHref($author$project$Generated$Route$Projects_New))
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('New')
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('mt-4 mb-2')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Project List')
+							])),
+						message
+					]);
+			}(),
+			title: 'Project List'
+		};
+	});
+var $author$project$Pages$Projects$Top$page = $author$project$Page$component(
+	{init: $author$project$Pages$Projects$Top$init, subscriptions: $author$project$Pages$Projects$Top$subscriptions, update: $author$project$Pages$Projects$Top$update, view: $author$project$Pages$Projects$Top$view});
 var $author$project$Pages$Top$view = {
 	body: _List_fromArray(
 		[
@@ -13146,8 +13421,9 @@ var $author$project$Page$upgrade = $ryannhg$elm_spa$Spa$upgrade;
 var $author$project$Generated$Pages$pages = {
 	docs: A3($author$project$Page$upgrade, $author$project$Generated$Pages$Docs_Model, $author$project$Generated$Pages$Docs_Msg, $author$project$Pages$Docs$page),
 	notFound: A3($author$project$Page$upgrade, $author$project$Generated$Pages$NotFound_Model, $author$project$Generated$Pages$NotFound_Msg, $author$project$Pages$NotFound$page),
-	projects_index: A3($author$project$Page$upgrade, $author$project$Generated$Pages$Projects_Index_Model, $author$project$Generated$Pages$Projects_Index_Msg, $author$project$Pages$Projects$Index$page),
+	projects_dynamic: A3($author$project$Page$upgrade, $author$project$Generated$Pages$Projects_Dynamic_Model, $author$project$Generated$Pages$Projects_Dynamic_Msg, $author$project$Pages$Projects$Dynamic$page),
 	projects_new: A3($author$project$Page$upgrade, $author$project$Generated$Pages$Projects_New_Model, $author$project$Generated$Pages$Projects_New_Msg, $author$project$Pages$Projects$New$page),
+	projects_top: A3($author$project$Page$upgrade, $author$project$Generated$Pages$Projects_Top_Model, $author$project$Generated$Pages$Projects_Top_Msg, $author$project$Pages$Projects$Top$page),
 	top: A3($author$project$Page$upgrade, $author$project$Generated$Pages$Top_Model, $author$project$Generated$Pages$Top_Msg, $author$project$Pages$Top$page)
 };
 var $author$project$Generated$Pages$init = function (route) {
@@ -13158,10 +13434,13 @@ var $author$project$Generated$Pages$init = function (route) {
 			return $author$project$Generated$Pages$pages.docs.init(_Utils_Tuple0);
 		case 'NotFound':
 			return $author$project$Generated$Pages$pages.notFound.init(_Utils_Tuple0);
-		case 'Projects_Index':
-			return $author$project$Generated$Pages$pages.projects_index.init(_Utils_Tuple0);
-		default:
+		case 'Projects_Top':
+			return $author$project$Generated$Pages$pages.projects_top.init(_Utils_Tuple0);
+		case 'Projects_New':
 			return $author$project$Generated$Pages$pages.projects_new.init(_Utils_Tuple0);
+		default:
+			var params = route.a;
+			return $author$project$Generated$Pages$pages.projects_dynamic.init(params);
 	}
 };
 var $author$project$Global$Model = F3(
@@ -13207,12 +13486,15 @@ var $author$project$Generated$Pages$bundle = function (bigModel) {
 		case 'NotFound_Model':
 			var model = bigModel.a;
 			return $author$project$Generated$Pages$pages.notFound.bundle(model);
-		case 'Projects_Index_Model':
+		case 'Projects_Top_Model':
 			var model = bigModel.a;
-			return $author$project$Generated$Pages$pages.projects_index.bundle(model);
-		default:
+			return $author$project$Generated$Pages$pages.projects_top.bundle(model);
+		case 'Projects_New_Model':
 			var model = bigModel.a;
 			return $author$project$Generated$Pages$pages.projects_new.bundle(model);
+		default:
+			var model = bigModel.a;
+			return $author$project$Generated$Pages$pages.projects_dynamic.bundle(model);
 	}
 };
 var $author$project$Generated$Pages$subscriptions = function (model) {
@@ -13291,7 +13573,7 @@ var $elm$url$Url$toString = function (url) {
 var $author$project$Generated$Pages$update = F2(
 	function (bigMsg, bigModel) {
 		var _v0 = _Utils_Tuple2(bigMsg, bigModel);
-		_v0$5:
+		_v0$6:
 		while (true) {
 			switch (_v0.a.$) {
 				case 'Top_Msg':
@@ -13300,7 +13582,7 @@ var $author$project$Generated$Pages$update = F2(
 						var model = _v0.b.a;
 						return A2($author$project$Generated$Pages$pages.top.update, msg, model);
 					} else {
-						break _v0$5;
+						break _v0$6;
 					}
 				case 'Docs_Msg':
 					if (_v0.b.$ === 'Docs_Model') {
@@ -13308,7 +13590,7 @@ var $author$project$Generated$Pages$update = F2(
 						var model = _v0.b.a;
 						return A2($author$project$Generated$Pages$pages.docs.update, msg, model);
 					} else {
-						break _v0$5;
+						break _v0$6;
 					}
 				case 'NotFound_Msg':
 					if (_v0.b.$ === 'NotFound_Model') {
@@ -13316,23 +13598,31 @@ var $author$project$Generated$Pages$update = F2(
 						var model = _v0.b.a;
 						return A2($author$project$Generated$Pages$pages.notFound.update, msg, model);
 					} else {
-						break _v0$5;
+						break _v0$6;
 					}
-				case 'Projects_Index_Msg':
-					if (_v0.b.$ === 'Projects_Index_Model') {
+				case 'Projects_Top_Msg':
+					if (_v0.b.$ === 'Projects_Top_Model') {
 						var msg = _v0.a.a;
 						var model = _v0.b.a;
-						return A2($author$project$Generated$Pages$pages.projects_index.update, msg, model);
+						return A2($author$project$Generated$Pages$pages.projects_top.update, msg, model);
 					} else {
-						break _v0$5;
+						break _v0$6;
 					}
-				default:
+				case 'Projects_New_Msg':
 					if (_v0.b.$ === 'Projects_New_Model') {
 						var msg = _v0.a.a;
 						var model = _v0.b.a;
 						return A2($author$project$Generated$Pages$pages.projects_new.update, msg, model);
 					} else {
-						break _v0$5;
+						break _v0$6;
+					}
+				default:
+					if (_v0.b.$ === 'Projects_Dynamic_Model') {
+						var msg = _v0.a.a;
+						var model = _v0.b.a;
+						return A2($author$project$Generated$Pages$pages.projects_dynamic.update, msg, model);
+					} else {
+						break _v0$6;
 					}
 			}
 		}
@@ -13485,7 +13775,7 @@ var $author$project$Components$navbar = A2(
 								[
 									$elm$html$Html$Attributes$class('link'),
 									$elm$html$Html$Attributes$href(
-									$author$project$Generated$Route$toHref($author$project$Generated$Route$Projects_Index))
+									$author$project$Generated$Route$toHref($author$project$Generated$Route$Projects_Top))
 								]),
 							_List_fromArray(
 								[
@@ -13550,4 +13840,4 @@ var $author$project$Main$view = function (model) {
 var $author$project$Main$main = $elm$browser$Browser$application(
 	{init: $author$project$Main$init, onUrlChange: $author$project$Main$UrlChanged, onUrlRequest: $author$project$Main$LinkClicked, subscriptions: $author$project$Main$subscriptions, update: $author$project$Main$update, view: $author$project$Main$view});
 _Platform_export({'Main':{'init':$author$project$Main$main(
-	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"},"Pages.Docs.Msg":{"args":[],"type":"Basics.Never"},"Pages.NotFound.Msg":{"args":[],"type":"Basics.Never"},"Pages.Top.Msg":{"args":[],"type":"Basics.Never"},"Graphql.Http.Error":{"args":["parsedData"],"type":"Graphql.Http.RawError parsedData Graphql.Http.HttpError"},"Pages.Projects.Index.Project":{"args":[],"type":"{ name : String.String, description : String.String }"},"Pages.Projects.New.Project":{"args":[],"type":"{ name : String.String, description : String.String }"},"Pages.Projects.Index.ProjectPage":{"args":[],"type":"{ data : List.List Pages.Projects.Index.Project }"},"Pages.Projects.Index.Response":{"args":[],"type":"{ projectPage : Pages.Projects.Index.ProjectPage }"},"Pages.Projects.New.Response":{"args":[],"type":"{ project : Pages.Projects.New.Project }"},"Graphql.Http.GraphqlError.GraphqlError":{"args":[],"type":"{ message : String.String, locations : Maybe.Maybe (List.List Graphql.Http.GraphqlError.Location), details : Dict.Dict String.String Json.Decode.Value }"},"Graphql.Http.GraphqlError.Location":{"args":[],"type":"{ line : Basics.Int, column : Basics.Int }"},"Http.Metadata":{"args":[],"type":"{ url : String.String, statusCode : Basics.Int, statusText : String.String, headers : Dict.Dict String.String String.String }"},"Json.Decode.Value":{"args":[],"type":"Json.Encode.Value"}},"unions":{"Main.Msg":{"args":[],"tags":{"LinkClicked":["Browser.UrlRequest"],"UrlChanged":["Url.Url"],"Global":["Global.Msg"],"Page":["Generated.Pages.Msg"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Generated.Pages.Msg":{"args":[],"tags":{"Top_Msg":["Pages.Top.Msg"],"Docs_Msg":["Pages.Docs.Msg"],"NotFound_Msg":["Pages.NotFound.Msg"],"Projects_Index_Msg":["Pages.Projects.Index.Msg"],"Projects_New_Msg":["Pages.Projects.New.Msg"]}},"Global.Msg":{"args":[],"tags":{"Navigate":["Generated.Route.Route"]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Pages.Projects.Index.Msg":{"args":[],"tags":{"NoOp":[],"GotResponse":["RemoteData.RemoteData (Graphql.Http.Error Pages.Projects.Index.Response) Pages.Projects.Index.Response"]}},"Pages.Projects.New.Msg":{"args":[],"tags":{"NoOp":[],"InputName":["String.String"],"InputDescription":["String.String"],"Submit":[],"GotResponse":["RemoteData.RemoteData (Graphql.Http.Error Pages.Projects.New.Response) Pages.Projects.New.Response"]}},"Basics.Never":{"args":[],"tags":{"JustOneMore":["Basics.Never"]}},"Generated.Route.Route":{"args":[],"tags":{"Top":[],"Docs":[],"NotFound":[],"Projects_Index":[],"Projects_New":[]}},"Graphql.Http.HttpError":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Http.Metadata","String.String"],"BadPayload":["Json.Decode.Error"]}},"List.List":{"args":["a"],"tags":{}},"Graphql.Http.RawError":{"args":["parsedData","httpError"],"tags":{"GraphqlError":["Graphql.Http.GraphqlError.PossiblyParsedData parsedData","List.List Graphql.Http.GraphqlError.GraphqlError"],"HttpError":["httpError"]}},"RemoteData.RemoteData":{"args":["e","a"],"tags":{"NotAsked":[],"Loading":[],"Failure":["e"],"Success":["a"]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":[]}},"Json.Decode.Error":{"args":[],"tags":{"Field":["String.String","Json.Decode.Error"],"Index":["Basics.Int","Json.Decode.Error"],"OneOf":["List.List Json.Decode.Error"],"Failure":["String.String","Json.Decode.Value"]}},"Graphql.Http.GraphqlError.PossiblyParsedData":{"args":["parsed"],"tags":{"ParsedData":["parsed"],"UnparsedData":["Json.Decode.Value"]}},"Json.Encode.Value":{"args":[],"tags":{"Value":[]}},"Dict.NColor":{"args":[],"tags":{"Red":[],"Black":[]}}}}})}});}(this));
+	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"},"Pages.Docs.Msg":{"args":[],"type":"Basics.Never"},"Pages.NotFound.Msg":{"args":[],"type":"Basics.Never"},"Pages.Top.Msg":{"args":[],"type":"Basics.Never"},"Graphql.Http.Error":{"args":["parsedData"],"type":"Graphql.Http.RawError parsedData Graphql.Http.HttpError"},"Api.ScalarCodecs.Id":{"args":[],"type":"Api.Scalar.Id"},"Pages.Projects.Dynamic.Project":{"args":[],"type":"{ id_ : Api.ScalarCodecs.Id, name : String.String, description : String.String }"},"Pages.Projects.New.Project":{"args":[],"type":"{ name : String.String, description : String.String }"},"Pages.Projects.Top.Project":{"args":[],"type":"{ id_ : Api.ScalarCodecs.Id, name : String.String, description : String.String }"},"Pages.Projects.Top.ProjectPage":{"args":[],"type":"{ data : List.List Pages.Projects.Top.Project }"},"Pages.Projects.Dynamic.Response":{"args":[],"type":"{ maybeProject : Maybe.Maybe Pages.Projects.Dynamic.Project }"},"Pages.Projects.New.Response":{"args":[],"type":"{ project : Pages.Projects.New.Project }"},"Pages.Projects.Top.Response":{"args":[],"type":"{ projectPage : Pages.Projects.Top.ProjectPage }"},"Graphql.Http.GraphqlError.GraphqlError":{"args":[],"type":"{ message : String.String, locations : Maybe.Maybe (List.List Graphql.Http.GraphqlError.Location), details : Dict.Dict String.String Json.Decode.Value }"},"Graphql.Http.GraphqlError.Location":{"args":[],"type":"{ line : Basics.Int, column : Basics.Int }"},"Http.Metadata":{"args":[],"type":"{ url : String.String, statusCode : Basics.Int, statusText : String.String, headers : Dict.Dict String.String String.String }"},"Json.Decode.Value":{"args":[],"type":"Json.Encode.Value"}},"unions":{"Main.Msg":{"args":[],"tags":{"LinkClicked":["Browser.UrlRequest"],"UrlChanged":["Url.Url"],"Global":["Global.Msg"],"Page":["Generated.Pages.Msg"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Generated.Pages.Msg":{"args":[],"tags":{"Top_Msg":["Pages.Top.Msg"],"Docs_Msg":["Pages.Docs.Msg"],"NotFound_Msg":["Pages.NotFound.Msg"],"Projects_Top_Msg":["Pages.Projects.Top.Msg"],"Projects_New_Msg":["Pages.Projects.New.Msg"],"Projects_Dynamic_Msg":["Pages.Projects.Dynamic.Msg"]}},"Global.Msg":{"args":[],"tags":{"Navigate":["Generated.Route.Route"]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Pages.Projects.Dynamic.Msg":{"args":[],"tags":{"NoOp":[],"GotResponse":["RemoteData.RemoteData (Graphql.Http.Error Pages.Projects.Dynamic.Response) Pages.Projects.Dynamic.Response"]}},"Pages.Projects.New.Msg":{"args":[],"tags":{"NoOp":[],"InputName":["String.String"],"InputDescription":["String.String"],"Submit":[],"GotResponse":["RemoteData.RemoteData (Graphql.Http.Error Pages.Projects.New.Response) Pages.Projects.New.Response"]}},"Pages.Projects.Top.Msg":{"args":[],"tags":{"NoOp":[],"GotResponse":["RemoteData.RemoteData (Graphql.Http.Error Pages.Projects.Top.Response) Pages.Projects.Top.Response"]}},"Basics.Never":{"args":[],"tags":{"JustOneMore":["Basics.Never"]}},"Generated.Route.Route":{"args":[],"tags":{"Top":[],"Docs":[],"NotFound":[],"Projects_Top":[],"Projects_New":[],"Projects_Dynamic":["{ param1 : String.String }"]}},"Graphql.Http.HttpError":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Http.Metadata","String.String"],"BadPayload":["Json.Decode.Error"]}},"Api.Scalar.Id":{"args":[],"tags":{"Id":["String.String"]}},"List.List":{"args":["a"],"tags":{}},"Graphql.Http.RawError":{"args":["parsedData","httpError"],"tags":{"GraphqlError":["Graphql.Http.GraphqlError.PossiblyParsedData parsedData","List.List Graphql.Http.GraphqlError.GraphqlError"],"HttpError":["httpError"]}},"RemoteData.RemoteData":{"args":["e","a"],"tags":{"NotAsked":[],"Loading":[],"Failure":["e"],"Success":["a"]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":[]}},"Json.Decode.Error":{"args":[],"tags":{"Field":["String.String","Json.Decode.Error"],"Index":["Basics.Int","Json.Decode.Error"],"OneOf":["List.List Json.Decode.Error"],"Failure":["String.String","Json.Decode.Value"]}},"Graphql.Http.GraphqlError.PossiblyParsedData":{"args":["parsed"],"tags":{"ParsedData":["parsed"],"UnparsedData":["Json.Decode.Value"]}},"Json.Encode.Value":{"args":[],"tags":{"Value":[]}},"Dict.NColor":{"args":[],"tags":{"Red":[],"Black":[]}}}}})}});}(this));

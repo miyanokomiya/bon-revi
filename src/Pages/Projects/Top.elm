@@ -1,9 +1,11 @@
-module Pages.Projects.Index exposing (Flags, Model, Msg, page)
+module Pages.Projects.Top exposing (Flags, Model, Msg, page)
 
 import Api.Object
 import Api.Object.Project
 import Api.Object.ProjectPage
 import Api.Query
+import Api.ScalarCodecs
+import Api.Scalar
 import Generated.Route as Route
 import Global
 import Graphql.Http
@@ -31,7 +33,8 @@ type alias Response =
 
 
 type alias Project =
-    { name : String
+    { id_ : Api.ScalarCodecs.Id
+    , name : String
     , description : String
     }
 
@@ -51,6 +54,7 @@ query =
 projectSelection : SelectionSet Project Api.Object.Project
 projectSelection =
     SelectionSet.succeed Project
+        |> SelectionSet.with Api.Object.Project.id_
         |> SelectionSet.with Api.Object.Project.name
         |> SelectionSet.with Api.Object.Project.description
 
@@ -140,7 +144,11 @@ viewResponse response =
 
 viewProjectRow : Project -> Html msg
 viewProjectRow project =
-    Html.div [ class "py-2 px-4 border rounded mt-2 first:mt-0" ]
+  let
+      id = case project.id_ of
+        Api.Scalar.Id i -> i
+  in
+    Html.a [ href (Route.toHref (Route.Projects_Dynamic { param1 = id })), class "block py-2 px-4 border rounded mt-2 first:mt-0" ]
         [ Html.div [ class "text-lg font-bold" ] [ Html.text project.name ]
         , Html.div [ class "mt-1 border-t" ] [ Html.text project.description ]
         ]

@@ -25,7 +25,7 @@ navbar =
         [ div [ class "container mx-auto flex justify-between" ]
             [ a [ class "", href (Route.toHref Route.Top) ] [ text "home" ]
             , div [ class "flex" ]
-                [ a [ class "link", href (Route.toHref Route.Projects_Index) ] [ text "projects" ]
+                [ a [ class "link", href (Route.toHref Route.Projects_Top) ] [ text "projects" ]
                 ]
             ]
         ]
