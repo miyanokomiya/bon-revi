@@ -12,7 +12,7 @@ path =
 
 secret : String
 secret =
-    "fnADqkZlYOACAcb9W51K0gni5dm2HH54g4hPNcP5"
+    "fnADqm2f06ACCVSReqgm7pwizGzleAmVZ3Ev5PWs"
 
 
 queryRequest : SelectionSet decodesTo RootQuery -> Graphql.Http.Request decodesTo

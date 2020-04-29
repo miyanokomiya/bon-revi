@@ -3,9 +3,11 @@ module Pages.Projects.Dynamic exposing (Flags, Model, Msg, page)
 import Api.Object
 import Api.Object.Project
 import Api.Object.ProjectPage
+import Api.Object.ProjectSecret
 import Api.Query
 import Api.Scalar
 import Api.ScalarCodecs
+import Components
 import Generated.Route as Route
 import Global
 import Graphql.Http
@@ -82,7 +84,7 @@ view model =
                         Html.div [] [ Html.text "Not Asked" ]
 
                     RemoteData.Loading ->
-                        Html.div [] [ Html.text "Loading" ]
+                        Components.loading
 
                     RemoteData.Failure e ->
                         Html.div [] [ Html.text "Failure" ]
@@ -111,6 +113,19 @@ viewProject project =
             [ Html.p [ class "w-32" ] [ Html.text "Description:" ]
             , Html.pre [] [ Html.text project.description ]
             ]
+        , Html.div [ class "flex" ]
+            [ Html.p [ class "w-32" ] [ Html.text "Secret:" ]
+            , Html.pre []
+                [ Html.text
+                    (case project.secret of
+                        Just secret ->
+                            secret.code
+
+                        _ ->
+                            "****"
+                    )
+                ]
+            ]
         ]
 
 
@@ -118,6 +133,12 @@ type alias Project =
     { id_ : Api.ScalarCodecs.Id
     , name : String
     , description : String
+    , secret : Maybe ProjectSecret
+    }
+
+
+type alias ProjectSecret =
+    { code : String
     }
 
 
@@ -139,6 +160,13 @@ projectSelection =
         |> SelectionSet.with Api.Object.Project.id_
         |> SelectionSet.with Api.Object.Project.name
         |> SelectionSet.with Api.Object.Project.description
+        |> SelectionSet.with (Api.Object.Project.secret projectSecretSelection)
+
+
+projectSecretSelection : SelectionSet ProjectSecret Api.Object.ProjectSecret
+projectSecretSelection =
+    SelectionSet.succeed ProjectSecret
+        |> SelectionSet.with Api.Object.ProjectSecret.code
 
 
 execQuery : Api.ScalarCodecs.Id -> Cmd Msg

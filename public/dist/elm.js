@@ -11602,9 +11602,9 @@ var $author$project$Api$Query$findProjectByID = F2(
 			object_,
 			A2($elm$core$Basics$composeR, $elm$core$Basics$identity, $elm$json$Json$Decode$nullable));
 	});
-var $author$project$Pages$Projects$Dynamic$Project = F3(
-	function (id_, name, description) {
-		return {description: description, id_: id_, name: name};
+var $author$project$Pages$Projects$Dynamic$Project = F4(
+	function (id_, name, description, secret) {
+		return {description: description, id_: id_, name: name, secret: secret};
 	});
 var $dillonkearns$elm_graphql$Graphql$RawField$Leaf = F2(
 	function (a, b) {
@@ -11641,6 +11641,10 @@ var $author$project$Api$Object$Project$id_ = A4(
 	_List_Nil,
 	$author$project$Api$Scalar$unwrapCodecs($author$project$Api$ScalarCodecs$codecs).codecId.decoder);
 var $author$project$Api$Object$Project$name = A4($dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField, 'String', 'name', _List_Nil, $elm$json$Json$Decode$string);
+var $author$project$Pages$Projects$Dynamic$ProjectSecret = function (code) {
+	return {code: code};
+};
+var $author$project$Api$Object$ProjectSecret$code = A4($dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField, 'String', 'code', _List_Nil, $elm$json$Json$Decode$string);
 var $dillonkearns$elm_graphql$Graphql$SelectionSet$succeed = function (constructor) {
 	return A2(
 		$dillonkearns$elm_graphql$Graphql$SelectionSet$SelectionSet,
@@ -11658,16 +11662,31 @@ var $dillonkearns$elm_graphql$Graphql$SelectionSet$with = F2(
 			_Utils_ap(selectionFields1, selectionFields2),
 			A3($elm$json$Json$Decode$map2, $elm$core$Basics$apR, selectionDecoder1, selectionDecoder2));
 	});
+var $author$project$Pages$Projects$Dynamic$projectSecretSelection = A2(
+	$dillonkearns$elm_graphql$Graphql$SelectionSet$with,
+	$author$project$Api$Object$ProjectSecret$code,
+	$dillonkearns$elm_graphql$Graphql$SelectionSet$succeed($author$project$Pages$Projects$Dynamic$ProjectSecret));
+var $author$project$Api$Object$Project$secret = function (object_) {
+	return A4(
+		$dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForCompositeField,
+		'secret',
+		_List_Nil,
+		object_,
+		A2($elm$core$Basics$composeR, $elm$core$Basics$identity, $elm$json$Json$Decode$nullable));
+};
 var $author$project$Pages$Projects$Dynamic$projectSelection = A2(
 	$dillonkearns$elm_graphql$Graphql$SelectionSet$with,
-	$author$project$Api$Object$Project$description,
+	$author$project$Api$Object$Project$secret($author$project$Pages$Projects$Dynamic$projectSecretSelection),
 	A2(
 		$dillonkearns$elm_graphql$Graphql$SelectionSet$with,
-		$author$project$Api$Object$Project$name,
+		$author$project$Api$Object$Project$description,
 		A2(
 			$dillonkearns$elm_graphql$Graphql$SelectionSet$with,
-			$author$project$Api$Object$Project$id_,
-			$dillonkearns$elm_graphql$Graphql$SelectionSet$succeed($author$project$Pages$Projects$Dynamic$Project))));
+			$author$project$Api$Object$Project$name,
+			A2(
+				$dillonkearns$elm_graphql$Graphql$SelectionSet$with,
+				$author$project$Api$Object$Project$id_,
+				$dillonkearns$elm_graphql$Graphql$SelectionSet$succeed($author$project$Pages$Projects$Dynamic$Project)))));
 var $author$project$Pages$Projects$Dynamic$query = function (id) {
 	return A2(
 		$dillonkearns$elm_graphql$Graphql$SelectionSet$with,
@@ -12468,7 +12487,7 @@ var $dillonkearns$elm_graphql$Graphql$Http$send = F2(
 		return (request.withCredentials ? $elm$http$Http$riskyRequest : $elm$http$Http$request)(
 			A2($dillonkearns$elm_graphql$Graphql$Http$toHttpRequestRecord, resultToMessage, fullRequest));
 	});
-var $author$project$Request$secret = 'fnADqkZlYOACAcb9W51K0gni5dm2HH54g4hPNcP5';
+var $author$project$Request$secret = 'fnADqm2f06ACCVSReqgm7pwizGzleAmVZ3Ev5PWs';
 var $elm$http$Http$Header = F2(
 	function (a, b) {
 		return {$: 'Header', a: a, b: b};
@@ -12520,6 +12539,13 @@ var $author$project$Pages$Projects$Dynamic$update = F2(
 				$elm$core$Platform$Cmd$none);
 		}
 	});
+var $author$project$Components$loading = A2(
+	$elm$html$Html$div,
+	_List_Nil,
+	_List_fromArray(
+		[
+			$elm$html$Html$text('Loading')
+		]));
 var $elm$html$Html$h2 = _VirtualDom_node('h2');
 var $elm$html$Html$pre = _VirtualDom_node('pre');
 var $author$project$Pages$Projects$Dynamic$viewProject = function (project) {
@@ -12579,6 +12605,41 @@ var $author$project$Pages$Projects$Dynamic$viewProject = function (project) {
 							[
 								$elm$html$Html$text(project.description)
 							]))
+					])),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('flex')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$p,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('w-32')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Secret:')
+							])),
+						A2(
+						$elm$html$Html$pre,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text(
+								function () {
+									var _v0 = project.secret;
+									if (_v0.$ === 'Just') {
+										var secret = _v0.a;
+										return secret.code;
+									} else {
+										return '****';
+									}
+								}())
+							]))
 					]))
 			]));
 };
@@ -12597,13 +12658,7 @@ var $author$project$Pages$Projects$Dynamic$view = function (model) {
 									$elm$html$Html$text('Not Asked')
 								]));
 					case 'Loading':
-						return A2(
-							$elm$html$Html$div,
-							_List_Nil,
-							_List_fromArray(
-								[
-									$elm$html$Html$text('Loading')
-								]));
+						return $author$project$Components$loading;
 					case 'Failure':
 						var e = _v0.a;
 						return A2(
@@ -12641,7 +12696,7 @@ var $author$project$Pages$Projects$Dynamic$page = $author$project$Page$element(
 var $author$project$Pages$Projects$New$init = function (flags) {
 	return _Utils_Tuple2(
 		{
-			projectInput: {description: '', name: ''},
+			projectInput: {code: '', description: '', name: ''},
 			response: $krisajenkins$remotedata$RemoteData$Loading
 		},
 		$elm$core$Platform$Cmd$none);
@@ -12653,27 +12708,19 @@ var $author$project$Pages$Projects$New$GotResponse = function (a) {
 	return {$: 'GotResponse', a: a};
 };
 var $dillonkearns$elm_graphql$Graphql$OptionalArgument$Absent = {$: 'Absent'};
+var $dillonkearns$elm_graphql$Graphql$OptionalArgument$Present = function (a) {
+	return {$: 'Present', a: a};
+};
 var $author$project$Api$InputObject$ProjectInput = function (a) {
 	return {$: 'ProjectInput', a: a};
 };
 var $author$project$Pages$Projects$New$Response = function (project) {
 	return {project: project};
 };
-var $dillonkearns$elm_graphql$Graphql$Internal$Encode$List = function (a) {
-	return {$: 'List', a: a};
-};
-var $dillonkearns$elm_graphql$Graphql$Internal$Encode$list = F2(
-	function (toValue, value) {
-		return $dillonkearns$elm_graphql$Graphql$Internal$Encode$List(
-			A2($elm$core$List$map, toValue, value));
-	});
-var $elm$json$Json$Encode$null = _Json_encodeNull;
-var $dillonkearns$elm_graphql$Graphql$Internal$Encode$null = $dillonkearns$elm_graphql$Graphql$Internal$Encode$Json($elm$json$Json$Encode$null);
-var $dillonkearns$elm_graphql$Graphql$Internal$Encode$maybe = function (encoder) {
-	return A2(
-		$elm$core$Basics$composeR,
-		$elm$core$Maybe$map(encoder),
-		$elm$core$Maybe$withDefault($dillonkearns$elm_graphql$Graphql$Internal$Encode$null));
+var $elm$json$Json$Encode$bool = _Json_wrap;
+var $dillonkearns$elm_graphql$Graphql$Internal$Encode$bool = function (value) {
+	return $dillonkearns$elm_graphql$Graphql$Internal$Encode$Json(
+		$elm$json$Json$Encode$bool(value));
 };
 var $dillonkearns$elm_graphql$Graphql$Internal$Encode$Object = function (a) {
 	return {$: 'Object', a: a};
@@ -12695,6 +12742,22 @@ var $dillonkearns$elm_graphql$Graphql$Internal$Encode$maybeObject = function (ma
 			},
 			maybeValues));
 };
+var $dillonkearns$elm_graphql$Graphql$Internal$Encode$string = function (value) {
+	return $dillonkearns$elm_graphql$Graphql$Internal$Encode$Json(
+		$elm$json$Json$Encode$string(value));
+};
+var $author$project$Api$InputObject$encodeProjectSecretInput = function (input) {
+	return $dillonkearns$elm_graphql$Graphql$Internal$Encode$maybeObject(
+		_List_fromArray(
+			[
+				_Utils_Tuple2(
+				'code',
+				$elm$core$Maybe$Just(
+					$dillonkearns$elm_graphql$Graphql$Internal$Encode$string(input.code)))
+			]));
+};
+var $elm$json$Json$Encode$null = _Json_encodeNull;
+var $dillonkearns$elm_graphql$Graphql$Internal$Encode$null = $dillonkearns$elm_graphql$Graphql$Internal$Encode$Json($elm$json$Json$Encode$null);
 var $dillonkearns$elm_graphql$Graphql$Internal$Encode$optional = F2(
 	function (optionalValue, toValue) {
 		switch (optionalValue.$) {
@@ -12708,9 +12771,42 @@ var $dillonkearns$elm_graphql$Graphql$Internal$Encode$optional = F2(
 				return $elm$core$Maybe$Just($dillonkearns$elm_graphql$Graphql$Internal$Encode$null);
 		}
 	});
-var $dillonkearns$elm_graphql$Graphql$Internal$Encode$string = function (value) {
-	return $dillonkearns$elm_graphql$Graphql$Internal$Encode$Json(
-		$elm$json$Json$Encode$string(value));
+var $author$project$Api$InputObject$encodeProjectSecretRelation = function (input) {
+	return $dillonkearns$elm_graphql$Graphql$Internal$Encode$maybeObject(
+		_List_fromArray(
+			[
+				_Utils_Tuple2(
+				'create',
+				A2($dillonkearns$elm_graphql$Graphql$Internal$Encode$optional, input.create, $author$project$Api$InputObject$encodeProjectSecretInput)),
+				_Utils_Tuple2(
+				'connect',
+				A2(
+					$dillonkearns$elm_graphql$Graphql$Internal$Encode$optional,
+					input.connect,
+					A2(
+						$author$project$Api$Scalar$unwrapEncoder,
+						function ($) {
+							return $.codecId;
+						},
+						$author$project$Api$ScalarCodecs$codecs))),
+				_Utils_Tuple2(
+				'disconnect',
+				A2($dillonkearns$elm_graphql$Graphql$Internal$Encode$optional, input.disconnect, $dillonkearns$elm_graphql$Graphql$Internal$Encode$bool))
+			]));
+};
+var $dillonkearns$elm_graphql$Graphql$Internal$Encode$List = function (a) {
+	return {$: 'List', a: a};
+};
+var $dillonkearns$elm_graphql$Graphql$Internal$Encode$list = F2(
+	function (toValue, value) {
+		return $dillonkearns$elm_graphql$Graphql$Internal$Encode$List(
+			A2($elm$core$List$map, toValue, value));
+	});
+var $dillonkearns$elm_graphql$Graphql$Internal$Encode$maybe = function (encoder) {
+	return A2(
+		$elm$core$Basics$composeR,
+		$elm$core$Maybe$map(encoder),
+		$elm$core$Maybe$withDefault($dillonkearns$elm_graphql$Graphql$Internal$Encode$null));
 };
 var $author$project$Api$InputObject$encodeFileInput = function (_v3) {
 	var input = _v3.a;
@@ -12810,7 +12906,10 @@ var $author$project$Api$InputObject$encodeProjectInput = function (_v0) {
 					$dillonkearns$elm_graphql$Graphql$Internal$Encode$string(input.description))),
 				_Utils_Tuple2(
 				'files',
-				A2($dillonkearns$elm_graphql$Graphql$Internal$Encode$optional, input.files, $author$project$Api$InputObject$encodeProjectFilesRelation))
+				A2($dillonkearns$elm_graphql$Graphql$Internal$Encode$optional, input.files, $author$project$Api$InputObject$encodeProjectFilesRelation)),
+				_Utils_Tuple2(
+				'secret',
+				A2($dillonkearns$elm_graphql$Graphql$Internal$Encode$optional, input.secret, $author$project$Api$InputObject$encodeProjectSecretRelation))
 			]));
 };
 var $author$project$Api$Mutation$createProject = F2(
@@ -12843,7 +12942,18 @@ var $author$project$Pages$Projects$New$mutation = function (input) {
 			$author$project$Api$Mutation$createProject,
 			{
 				data: $author$project$Api$InputObject$ProjectInput(
-					{description: input.description, files: $dillonkearns$elm_graphql$Graphql$OptionalArgument$Absent, name: input.name})
+					{
+						description: input.description,
+						files: $dillonkearns$elm_graphql$Graphql$OptionalArgument$Absent,
+						name: input.name,
+						secret: $dillonkearns$elm_graphql$Graphql$OptionalArgument$Present(
+							{
+								connect: $dillonkearns$elm_graphql$Graphql$OptionalArgument$Absent,
+								create: $dillonkearns$elm_graphql$Graphql$OptionalArgument$Present(
+									{code: input.code}),
+								disconnect: $dillonkearns$elm_graphql$Graphql$OptionalArgument$Absent
+							})
+					})
 			},
 			$author$project$Pages$Projects$New$projectSelection),
 		$dillonkearns$elm_graphql$Graphql$SelectionSet$succeed($author$project$Pages$Projects$New$Response));
@@ -12904,6 +13014,17 @@ var $author$project$Pages$Projects$New$update = F2(
 								{description: val})
 						}),
 					$elm$core$Platform$Cmd$none);
+			case 'InputSecretCode':
+				var val = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							projectInput: _Utils_update(
+								projectInput,
+								{code: val})
+						}),
+					$elm$core$Platform$Cmd$none);
 			case 'Submit':
 				return _Utils_Tuple2(
 					model,
@@ -12916,7 +13037,7 @@ var $author$project$Pages$Projects$New$update = F2(
 						{
 							projectInput: _Utils_update(
 								projectInput,
-								{description: '', name: ''}),
+								{code: '', description: '', name: ''}),
 							response: response
 						}),
 					$elm$core$Platform$Cmd$none);
@@ -12927,6 +13048,9 @@ var $author$project$Pages$Projects$New$InputDescription = function (a) {
 };
 var $author$project$Pages$Projects$New$InputName = function (a) {
 	return {$: 'InputName', a: a};
+};
+var $author$project$Pages$Projects$New$InputSecretCode = function (a) {
+	return {$: 'InputSecretCode', a: a};
 };
 var $author$project$Pages$Projects$New$Submit = {$: 'Submit'};
 var $elm$html$Html$form = _VirtualDom_node('form');
@@ -13027,6 +13151,25 @@ var $author$project$Pages$Projects$New$view = function (model) {
 											[
 												$elm$html$Html$Attributes$value(model.projectInput.description),
 												$elm$html$Html$Events$onInput($author$project$Pages$Projects$New$InputDescription),
+												$elm$html$Html$Attributes$class('w-full py-2 px-4 border rounded')
+											]),
+										_List_Nil)
+									])),
+								A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('mb-2')
+									]),
+								_List_fromArray(
+									[
+										$author$project$Pages$Projects$New$viewLabel('Secret Code'),
+										A2(
+										$elm$html$Html$textarea,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$value(model.projectInput.code),
+												$elm$html$Html$Events$onInput($author$project$Pages$Projects$New$InputSecretCode),
 												$elm$html$Html$Attributes$class('w-full py-2 px-4 border rounded')
 											]),
 										_List_Nil)
@@ -13840,4 +13983,4 @@ var $author$project$Main$view = function (model) {
 var $author$project$Main$main = $elm$browser$Browser$application(
 	{init: $author$project$Main$init, onUrlChange: $author$project$Main$UrlChanged, onUrlRequest: $author$project$Main$LinkClicked, subscriptions: $author$project$Main$subscriptions, update: $author$project$Main$update, view: $author$project$Main$view});
 _Platform_export({'Main':{'init':$author$project$Main$main(
-	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"},"Pages.Docs.Msg":{"args":[],"type":"Basics.Never"},"Pages.NotFound.Msg":{"args":[],"type":"Basics.Never"},"Pages.Top.Msg":{"args":[],"type":"Basics.Never"},"Graphql.Http.Error":{"args":["parsedData"],"type":"Graphql.Http.RawError parsedData Graphql.Http.HttpError"},"Api.ScalarCodecs.Id":{"args":[],"type":"Api.Scalar.Id"},"Pages.Projects.Dynamic.Project":{"args":[],"type":"{ id_ : Api.ScalarCodecs.Id, name : String.String, description : String.String }"},"Pages.Projects.New.Project":{"args":[],"type":"{ name : String.String, description : String.String }"},"Pages.Projects.Top.Project":{"args":[],"type":"{ id_ : Api.ScalarCodecs.Id, name : String.String, description : String.String }"},"Pages.Projects.Top.ProjectPage":{"args":[],"type":"{ data : List.List Pages.Projects.Top.Project }"},"Pages.Projects.Dynamic.Response":{"args":[],"type":"{ maybeProject : Maybe.Maybe Pages.Projects.Dynamic.Project }"},"Pages.Projects.New.Response":{"args":[],"type":"{ project : Pages.Projects.New.Project }"},"Pages.Projects.Top.Response":{"args":[],"type":"{ projectPage : Pages.Projects.Top.ProjectPage }"},"Graphql.Http.GraphqlError.GraphqlError":{"args":[],"type":"{ message : String.String, locations : Maybe.Maybe (List.List Graphql.Http.GraphqlError.Location), details : Dict.Dict String.String Json.Decode.Value }"},"Graphql.Http.GraphqlError.Location":{"args":[],"type":"{ line : Basics.Int, column : Basics.Int }"},"Http.Metadata":{"args":[],"type":"{ url : String.String, statusCode : Basics.Int, statusText : String.String, headers : Dict.Dict String.String String.String }"},"Json.Decode.Value":{"args":[],"type":"Json.Encode.Value"}},"unions":{"Main.Msg":{"args":[],"tags":{"LinkClicked":["Browser.UrlRequest"],"UrlChanged":["Url.Url"],"Global":["Global.Msg"],"Page":["Generated.Pages.Msg"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Generated.Pages.Msg":{"args":[],"tags":{"Top_Msg":["Pages.Top.Msg"],"Docs_Msg":["Pages.Docs.Msg"],"NotFound_Msg":["Pages.NotFound.Msg"],"Projects_Top_Msg":["Pages.Projects.Top.Msg"],"Projects_New_Msg":["Pages.Projects.New.Msg"],"Projects_Dynamic_Msg":["Pages.Projects.Dynamic.Msg"]}},"Global.Msg":{"args":[],"tags":{"Navigate":["Generated.Route.Route"]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Pages.Projects.Dynamic.Msg":{"args":[],"tags":{"NoOp":[],"GotResponse":["RemoteData.RemoteData (Graphql.Http.Error Pages.Projects.Dynamic.Response) Pages.Projects.Dynamic.Response"]}},"Pages.Projects.New.Msg":{"args":[],"tags":{"NoOp":[],"InputName":["String.String"],"InputDescription":["String.String"],"Submit":[],"GotResponse":["RemoteData.RemoteData (Graphql.Http.Error Pages.Projects.New.Response) Pages.Projects.New.Response"]}},"Pages.Projects.Top.Msg":{"args":[],"tags":{"NoOp":[],"GotResponse":["RemoteData.RemoteData (Graphql.Http.Error Pages.Projects.Top.Response) Pages.Projects.Top.Response"]}},"Basics.Never":{"args":[],"tags":{"JustOneMore":["Basics.Never"]}},"Generated.Route.Route":{"args":[],"tags":{"Top":[],"Docs":[],"NotFound":[],"Projects_Top":[],"Projects_New":[],"Projects_Dynamic":["{ param1 : String.String }"]}},"Graphql.Http.HttpError":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Http.Metadata","String.String"],"BadPayload":["Json.Decode.Error"]}},"Api.Scalar.Id":{"args":[],"tags":{"Id":["String.String"]}},"List.List":{"args":["a"],"tags":{}},"Graphql.Http.RawError":{"args":["parsedData","httpError"],"tags":{"GraphqlError":["Graphql.Http.GraphqlError.PossiblyParsedData parsedData","List.List Graphql.Http.GraphqlError.GraphqlError"],"HttpError":["httpError"]}},"RemoteData.RemoteData":{"args":["e","a"],"tags":{"NotAsked":[],"Loading":[],"Failure":["e"],"Success":["a"]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":[]}},"Json.Decode.Error":{"args":[],"tags":{"Field":["String.String","Json.Decode.Error"],"Index":["Basics.Int","Json.Decode.Error"],"OneOf":["List.List Json.Decode.Error"],"Failure":["String.String","Json.Decode.Value"]}},"Graphql.Http.GraphqlError.PossiblyParsedData":{"args":["parsed"],"tags":{"ParsedData":["parsed"],"UnparsedData":["Json.Decode.Value"]}},"Json.Encode.Value":{"args":[],"tags":{"Value":[]}},"Dict.NColor":{"args":[],"tags":{"Red":[],"Black":[]}}}}})}});}(this));
+	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"},"Pages.Docs.Msg":{"args":[],"type":"Basics.Never"},"Pages.NotFound.Msg":{"args":[],"type":"Basics.Never"},"Pages.Top.Msg":{"args":[],"type":"Basics.Never"},"Graphql.Http.Error":{"args":["parsedData"],"type":"Graphql.Http.RawError parsedData Graphql.Http.HttpError"},"Api.ScalarCodecs.Id":{"args":[],"type":"Api.Scalar.Id"},"Pages.Projects.Dynamic.Project":{"args":[],"type":"{ id_ : Api.ScalarCodecs.Id, name : String.String, description : String.String, secret : Maybe.Maybe Pages.Projects.Dynamic.ProjectSecret }"},"Pages.Projects.New.Project":{"args":[],"type":"{ name : String.String, description : String.String }"},"Pages.Projects.Top.Project":{"args":[],"type":"{ id_ : Api.ScalarCodecs.Id, name : String.String, description : String.String }"},"Pages.Projects.Top.ProjectPage":{"args":[],"type":"{ data : List.List Pages.Projects.Top.Project }"},"Pages.Projects.Dynamic.ProjectSecret":{"args":[],"type":"{ code : String.String }"},"Pages.Projects.Dynamic.Response":{"args":[],"type":"{ maybeProject : Maybe.Maybe Pages.Projects.Dynamic.Project }"},"Pages.Projects.New.Response":{"args":[],"type":"{ project : Pages.Projects.New.Project }"},"Pages.Projects.Top.Response":{"args":[],"type":"{ projectPage : Pages.Projects.Top.ProjectPage }"},"Graphql.Http.GraphqlError.GraphqlError":{"args":[],"type":"{ message : String.String, locations : Maybe.Maybe (List.List Graphql.Http.GraphqlError.Location), details : Dict.Dict String.String Json.Decode.Value }"},"Graphql.Http.GraphqlError.Location":{"args":[],"type":"{ line : Basics.Int, column : Basics.Int }"},"Http.Metadata":{"args":[],"type":"{ url : String.String, statusCode : Basics.Int, statusText : String.String, headers : Dict.Dict String.String String.String }"},"Json.Decode.Value":{"args":[],"type":"Json.Encode.Value"}},"unions":{"Main.Msg":{"args":[],"tags":{"LinkClicked":["Browser.UrlRequest"],"UrlChanged":["Url.Url"],"Global":["Global.Msg"],"Page":["Generated.Pages.Msg"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Generated.Pages.Msg":{"args":[],"tags":{"Top_Msg":["Pages.Top.Msg"],"Docs_Msg":["Pages.Docs.Msg"],"NotFound_Msg":["Pages.NotFound.Msg"],"Projects_Top_Msg":["Pages.Projects.Top.Msg"],"Projects_New_Msg":["Pages.Projects.New.Msg"],"Projects_Dynamic_Msg":["Pages.Projects.Dynamic.Msg"]}},"Global.Msg":{"args":[],"tags":{"Navigate":["Generated.Route.Route"]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Pages.Projects.Dynamic.Msg":{"args":[],"tags":{"NoOp":[],"GotResponse":["RemoteData.RemoteData (Graphql.Http.Error Pages.Projects.Dynamic.Response) Pages.Projects.Dynamic.Response"]}},"Pages.Projects.New.Msg":{"args":[],"tags":{"NoOp":[],"InputName":["String.String"],"InputDescription":["String.String"],"InputSecretCode":["String.String"],"Submit":[],"GotResponse":["RemoteData.RemoteData (Graphql.Http.Error Pages.Projects.New.Response) Pages.Projects.New.Response"]}},"Pages.Projects.Top.Msg":{"args":[],"tags":{"NoOp":[],"GotResponse":["RemoteData.RemoteData (Graphql.Http.Error Pages.Projects.Top.Response) Pages.Projects.Top.Response"]}},"Basics.Never":{"args":[],"tags":{"JustOneMore":["Basics.Never"]}},"Generated.Route.Route":{"args":[],"tags":{"Top":[],"Docs":[],"NotFound":[],"Projects_Top":[],"Projects_New":[],"Projects_Dynamic":["{ param1 : String.String }"]}},"Graphql.Http.HttpError":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Http.Metadata","String.String"],"BadPayload":["Json.Decode.Error"]}},"Api.Scalar.Id":{"args":[],"tags":{"Id":["String.String"]}},"List.List":{"args":["a"],"tags":{}},"Graphql.Http.RawError":{"args":["parsedData","httpError"],"tags":{"GraphqlError":["Graphql.Http.GraphqlError.PossiblyParsedData parsedData","List.List Graphql.Http.GraphqlError.GraphqlError"],"HttpError":["httpError"]}},"RemoteData.RemoteData":{"args":["e","a"],"tags":{"NotAsked":[],"Loading":[],"Failure":["e"],"Success":["a"]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":[]}},"Json.Decode.Error":{"args":[],"tags":{"Field":["String.String","Json.Decode.Error"],"Index":["Basics.Int","Json.Decode.Error"],"OneOf":["List.List Json.Decode.Error"],"Failure":["String.String","Json.Decode.Value"]}},"Graphql.Http.GraphqlError.PossiblyParsedData":{"args":["parsed"],"tags":{"ParsedData":["parsed"],"UnparsedData":["Json.Decode.Value"]}},"Json.Encode.Value":{"args":[],"tags":{"Value":[]}},"Dict.NColor":{"args":[],"tags":{"Red":[],"Black":[]}}}}})}});}(this));

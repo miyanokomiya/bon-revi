@@ -2,6 +2,7 @@ type Project {
   name: String!
   description: String!
   files: [File] @relation
+  secret: ProjectSecret @relation
 }
 
 type File {
@@ -9,6 +10,10 @@ type File {
   description: String!
   content: String!
   project: Project!
+}
+
+type ProjectSecret {
+  code: String!
 }
 
 type Query {

@@ -30,6 +30,7 @@ type Msg
     = NoOp
     | InputName String
     | InputDescription String
+    | InputSecretCode String
     | Submit
     | GotResponse (RemoteData (Graphql.Http.Error Response) Response)
 
@@ -49,6 +50,7 @@ init flags =
     ( { projectInput =
             { name = ""
             , description = ""
+            , code = ""
             }
       , response = RemoteData.Loading
       }
@@ -72,11 +74,14 @@ update msg model =
         InputDescription val ->
             ( { model | projectInput = { projectInput | description = val } }, Cmd.none )
 
+        InputSecretCode val ->
+            ( { model | projectInput = { projectInput | code = val } }, Cmd.none )
+
         Submit ->
             ( model, makeRequest projectInput )
 
         GotResponse response ->
-            ( { model | projectInput = { projectInput | name = "", description = "" }, response = response }, Cmd.none )
+            ( { model | projectInput = { projectInput | name = "", description = "", code = "" }, response = response }, Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
@@ -98,6 +103,10 @@ view model =
                 , Html.div [ class "mb-2" ]
                     [ viewLabel "Description"
                     , Html.textarea [ value model.projectInput.description, onInput InputDescription, class "w-full py-2 px-4 border rounded" ] []
+                    ]
+                , Html.div [ class "mb-2" ]
+                    [ viewLabel "Secret Code"
+                    , Html.textarea [ value model.projectInput.code, onInput InputSecretCode, class "w-full py-2 px-4 border rounded" ] []
                     ]
                 , Html.div [ class "text-right" ]
                     [ Html.button [ class "border py-2 px-4 bg-blue-500 text-white" ] [ Html.text "Create" ]
@@ -126,6 +135,7 @@ type alias Project =
 type alias ProjectInput =
     { name : String
     , description : String
+    , code : String
     }
 
 
@@ -139,6 +149,12 @@ mutation input =
                         { name = input.name
                         , description = input.description
                         , files = Graphql.OptionalArgument.Absent
+                        , secret =
+                            Graphql.OptionalArgument.Present
+                                { create = Graphql.OptionalArgument.Present { code = input.code }
+                                , connect = Graphql.OptionalArgument.Absent
+                                , disconnect = Graphql.OptionalArgument.Absent
+                                }
                         }
                 }
                 projectSelection

@@ -1,4 +1,4 @@
-module Components exposing (layout)
+module Components exposing (layout, loading)
 
 import Browser exposing (Document)
 import Generated.Route as Route exposing (Route)
@@ -38,3 +38,8 @@ footer =
             [ class "container mx-auto" ]
             [ text "built with elm ❤" ]
         ]
+
+
+loading : Html msg
+loading =
+    Html.div [] [ Html.text "Loading" ]
