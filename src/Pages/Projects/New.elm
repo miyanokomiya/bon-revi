@@ -3,6 +3,8 @@ module Pages.Projects.New exposing (Flags, Model, Msg, page)
 import Api.InputObject
 import Api.Mutation
 import Api.Object
+import Api.Object.File
+import Api.Object.FilePage
 import Api.Object.Project
 import Graphql.Http
 import Graphql.Operation exposing (RootMutation)
@@ -129,6 +131,19 @@ type alias Response =
 type alias Project =
     { name : String
     , description : String
+    , files : FilePage
+    }
+
+
+type alias File =
+    { path : String
+    , description : String
+    , content : String
+    }
+
+
+type alias FilePage =
+    { data : List File
     }
 
 
@@ -148,7 +163,24 @@ mutation input =
                     Api.InputObject.ProjectInput
                         { name = input.name
                         , description = input.description
-                        , files = Graphql.OptionalArgument.Absent
+                        , files =
+                            Graphql.OptionalArgument.Present
+                                (Api.InputObject.ProjectFilesRelation
+                                    { create =
+                                        Graphql.OptionalArgument.Present
+                                            [ Just
+                                                (Api.InputObject.FileInput
+                                                    { path = "file.txt"
+                                                    , description = "desc"
+                                                    , content = "hoge\nfuga"
+                                                    , project = Graphql.OptionalArgument.Absent
+                                                    }
+                                                )
+                                            ]
+                                    , connect = Graphql.OptionalArgument.Absent
+                                    , disconnect = Graphql.OptionalArgument.Absent
+                                    }
+                                )
                         , secret =
                             Graphql.OptionalArgument.Present
                                 { create = Graphql.OptionalArgument.Present { code = input.code }
@@ -166,6 +198,24 @@ projectSelection =
     SelectionSet.succeed Project
         |> SelectionSet.with Api.Object.Project.name
         |> SelectionSet.with Api.Object.Project.description
+        |> SelectionSet.with (Api.Object.Project.files identity filePageSelection)
+
+
+fileSelection : SelectionSet File Api.Object.File
+fileSelection =
+    SelectionSet.succeed File
+        |> SelectionSet.with Api.Object.File.path
+        |> SelectionSet.with Api.Object.File.description
+        |> SelectionSet.with Api.Object.File.content
+
+
+filePageSelection : SelectionSet FilePage Api.Object.FilePage
+filePageSelection =
+    SelectionSet.succeed FilePage
+        |> SelectionSet.with
+            (Api.Object.FilePage.data fileSelection
+                |> SelectionSet.nonNullElementsOrFail
+            )
 
 
 makeRequest : ProjectInput -> Cmd Msg
