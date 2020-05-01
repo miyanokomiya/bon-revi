@@ -1,6 +1,8 @@
 module Pages.Projects.Dynamic exposing (Flags, Model, Msg, page)
 
 import Api.Object
+import Api.Object.File
+import Api.Object.FilePage
 import Api.Object.Project
 import Api.Object.ProjectPage
 import Api.Object.ProjectSecret
@@ -92,7 +94,18 @@ subscriptions model =
 
 view : Model -> Document Msg
 view model =
-    { title = "Projects.Dynamic"
+    { title =
+        case model.data of
+            RemoteData.Success response ->
+                case response.maybeProject of
+                    Just project ->
+                        project.name
+
+                    _ ->
+                        "Project"
+
+            _ ->
+                "Project"
     , body =
         let
             content =
@@ -150,6 +163,28 @@ viewProject project =
                     )
                 ]
             ]
+        , Html.div [ class "mt-4" ]
+            [ Html.h3 [ class "text-lg" ] [ Html.text "Files" ]
+            , Html.div [ class "mt-2" ]
+                [ Html.div [] (List.map (\file -> viewFile file) project.files.data)
+                ]
+            ]
+        ]
+
+
+viewFile : File -> Html msg
+viewFile file =
+    Html.div []
+        [ Html.div [ class "mb-2 pb-1 flex border-b-2 text-xl" ]
+            [ Html.h2 [] [ Html.text file.path ] ]
+        , Html.div [ class "flex" ]
+            [ Html.p [ class "w-32" ] [ Html.text "Description:" ]
+            , Html.pre [] [ Html.text file.description ]
+            ]
+        , Html.div [ class "mt-2 flex" ]
+            [ Html.pre [ class "w-full py-2 px-4 border border-gray-600 rounded" ]
+                [ Html.text file.content ]
+            ]
         ]
 
 
@@ -158,6 +193,20 @@ type alias Project =
     , name : String
     , description : String
     , secret : Maybe ProjectSecret
+    , files : FilePage
+    }
+
+
+type alias File =
+    { id_ : Api.ScalarCodecs.Id
+    , path : String
+    , description : String
+    , content : String
+    }
+
+
+type alias FilePage =
+    { data : List File
     }
 
 
@@ -185,12 +234,31 @@ projectSelection =
         |> SelectionSet.with Api.Object.Project.name
         |> SelectionSet.with Api.Object.Project.description
         |> SelectionSet.with (Api.Object.Project.secret projectSecretSelection)
+        |> SelectionSet.with (Api.Object.Project.files identity filePageSelection)
 
 
 projectSecretSelection : SelectionSet ProjectSecret Api.Object.ProjectSecret
 projectSecretSelection =
     SelectionSet.succeed ProjectSecret
         |> SelectionSet.with Api.Object.ProjectSecret.code
+
+
+filePageSelection : SelectionSet FilePage Api.Object.FilePage
+filePageSelection =
+    SelectionSet.succeed FilePage
+        |> SelectionSet.with
+            (Api.Object.FilePage.data fileSelection
+                |> SelectionSet.nonNullElementsOrFail
+            )
+
+
+fileSelection : SelectionSet File Api.Object.File
+fileSelection =
+    SelectionSet.succeed File
+        |> SelectionSet.with Api.Object.File.id_
+        |> SelectionSet.with Api.Object.File.path
+        |> SelectionSet.with Api.Object.File.description
+        |> SelectionSet.with Api.Object.File.content
 
 
 execQuery : Api.ScalarCodecs.Id -> Cmd Msg
