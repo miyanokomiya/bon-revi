@@ -1,0 +1,44 @@
+// auth > user > project > write
+Lambda(
+  ["oldData", "newData"],
+  Equals(Select(["data", "files"], Var("oldData"), null), null)
+)
+
+// auth > user > file > write
+Lambda(
+  ["oldData", "newData"],
+  Equals(Select(["data", "project"], Var("oldData"), null), null)
+)
+
+// delete_project
+Query(
+  Lambda(
+    ["id", "code"],
+    Let(
+      { projectRef: Ref(Collection("Project"), Var("id")) },
+      If(
+        And(
+          Exists(Var("projectRef")),
+          Equals(
+            Var("code"),
+            Select(
+              ["data", "code"],
+              Get(Select(["data", "secret"], Get(Var("projectRef"))))
+            )
+          )
+        ),
+        Do(
+          Foreach(
+            Paginate(
+              Match(Index("file_project_by_project"), Var("projectRef"))
+            ),
+            Lambda("file", Delete(Var("file")))
+          ),
+          Delete(Select(["data", "secret"], Get(Var("projectRef")))),
+          Delete(Var("projectRef"))
+        ),
+        Abort("invalid code")
+      )
+    )
+  )
+)

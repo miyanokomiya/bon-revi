@@ -18,4 +18,5 @@ type ProjectSecret {
 
 type Query {
   allProjects: [Project!]
+  deleteProjectFn(id: String!, code: String!): Project! @resolver(name: "delete_project")
 }

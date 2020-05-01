@@ -14,7 +14,8 @@ import Graphql.Http
 import Graphql.Operation exposing (RootQuery)
 import Graphql.SelectionSet as SelectionSet exposing (SelectionSet)
 import Html exposing (Html)
-import Html.Attributes exposing (class, href)
+import Html.Attributes exposing (class, href, value)
+import Html.Events exposing (onClick, onInput)
 import Page exposing (Document, Page)
 import RemoteData exposing (RemoteData)
 import Request
@@ -26,13 +27,18 @@ type alias Flags =
 
 type alias Model =
     { data : RemoteData (Graphql.Http.Error Response) Response
+    , deleteResponse : RemoteData (Graphql.Http.Error DeleteResponse) DeleteResponse
     , id : Api.ScalarCodecs.Id
+    , projectSecret : String
     }
 
 
 type Msg
     = NoOp
     | GotResponse (RemoteData (Graphql.Http.Error Response) Response)
+    | InputSecretCode String
+    | Delete
+    | GotDeleteResponse (RemoteData (Graphql.Http.Error DeleteResponse) DeleteResponse)
 
 
 page : Page Flags Model Msg
@@ -52,7 +58,9 @@ init flags =
             Api.Scalar.Id flags.param1
     in
     ( { data = RemoteData.Loading
+      , deleteResponse = RemoteData.Loading
       , id = id
+      , projectSecret = ""
       }
     , execQuery id
     )
@@ -66,6 +74,15 @@ update msg model =
 
         GotResponse response ->
             ( { model | data = response }, Cmd.none )
+
+        InputSecretCode val ->
+            ( { model | projectSecret = val }, Cmd.none )
+
+        Delete ->
+            ( model, execDeleteQuery model.projectSecret model.id )
+
+        GotDeleteResponse response ->
+            ( { model | data = RemoteData.NotAsked, deleteResponse = response }, Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
@@ -81,7 +98,7 @@ view model =
             content =
                 case model.data of
                     RemoteData.NotAsked ->
-                        Html.div [] [ Html.text "Not Asked" ]
+                        Html.div [] [ Html.text "No Data" ]
 
                     RemoteData.Loading ->
                         Components.loading
@@ -92,7 +109,14 @@ view model =
                     RemoteData.Success response ->
                         case response.maybeProject of
                             Just project ->
-                                viewProject project
+                                Html.div []
+                                    [ viewProject project
+                                    , Html.div [ class "mt-6 flex items-center" ]
+                                        [ Html.label [ class "mr-2 block" ] [ Html.text "Code:" ]
+                                        , Html.input [ value model.projectSecret, onInput InputSecretCode, class "mr-2 w-32 py-2 px-4 border rounded" ] []
+                                        , Html.button [ class "border py-2 px-4 bg-red-500 text-white", onClick Delete ] [ Html.text "Delete" ]
+                                        ]
+                                    ]
 
                             _ ->
                                 Html.div [] [ Html.text "Not Found" ]
@@ -175,3 +199,23 @@ execQuery id =
         |> Request.queryRequest
         |> Request.withHeader
         |> Graphql.Http.send (RemoteData.fromResult >> GotResponse)
+
+
+type alias DeleteResponse =
+    { project : Project
+    }
+
+
+deleteQuery : String -> Api.ScalarCodecs.Id -> SelectionSet DeleteResponse RootQuery
+deleteQuery code id =
+    SelectionSet.succeed DeleteResponse
+        |> SelectionSet.with
+            (Api.Query.deleteProjectFn { id = Request.idToString id, code = code } projectSelection)
+
+
+execDeleteQuery : String -> Api.ScalarCodecs.Id -> Cmd Msg
+execDeleteQuery code id =
+    deleteQuery code id
+        |> Request.queryRequest
+        |> Request.withHeader
+        |> Graphql.Http.send (RemoteData.fromResult >> GotDeleteResponse)
