@@ -60,7 +60,7 @@ init flags =
             Api.Scalar.Id flags.param1
     in
     ( { data = RemoteData.Loading
-      , deleteResponse = RemoteData.Loading
+      , deleteResponse = RemoteData.NotAsked
       , id = id
       , projectSecret = ""
       }
@@ -81,10 +81,15 @@ update msg model =
             ( { model | projectSecret = val }, Cmd.none )
 
         Delete ->
-            ( model, execDeleteQuery model.projectSecret model.id )
+            ( { model | deleteResponse = RemoteData.Loading }, execDeleteQuery model.projectSecret model.id )
 
         GotDeleteResponse response ->
-            ( { model | data = RemoteData.NotAsked, deleteResponse = response }, Cmd.none )
+            case response of
+                RemoteData.Success _ ->
+                    ( { model | data = RemoteData.NotAsked, deleteResponse = response }, Cmd.none )
+
+                _ ->
+                    ( { model | deleteResponse = response }, Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
@@ -116,7 +121,7 @@ view model =
                     RemoteData.Loading ->
                         Components.loading
 
-                    RemoteData.Failure e ->
+                    RemoteData.Failure _ ->
                         Html.div [] [ Html.text "Failure" ]
 
                     RemoteData.Success response ->
@@ -125,10 +130,29 @@ view model =
                                 Html.div []
                                     [ viewProject project
                                     , Html.div [ class "mt-6 flex items-center" ]
-                                        [ Html.label [ class "mr-2 block" ] [ Html.text "Code:" ]
-                                        , Html.input [ value model.projectSecret, onInput InputSecretCode, class "mr-2 w-32 py-2 px-4 border rounded" ] []
-                                        , Html.button [ class "border py-2 px-4 bg-red-500 text-white", onClick Delete ] [ Html.text "Delete" ]
-                                        ]
+                                        (case model.deleteResponse of
+                                            RemoteData.NotAsked ->
+                                                [ Html.label [ class "mr-2" ] [ Html.text "Code:" ]
+                                                , Html.input [ value model.projectSecret, onInput InputSecretCode, class "mr-2 w-32 py-2 px-4 border rounded" ] []
+                                                , Html.button [ class "border py-2 px-4 bg-red-500 text-white", onClick Delete ] [ Html.text "Delete" ]
+                                                ]
+
+                                            RemoteData.Loading ->
+                                                [ Html.label [ class "mr-2" ] [ Html.text "Deleting..." ] ]
+
+                                            RemoteData.Failure _ ->
+                                                [ Html.label [ class "mr-2" ] [ Html.text "Code:" ]
+                                                , Html.input [ value model.projectSecret, onInput InputSecretCode, class "mr-2 w-32 py-2 px-4 border rounded" ] []
+                                                , Html.button [ class "border py-2 px-4 bg-red-500 text-white", onClick Delete ] [ Html.text "Delete" ]
+                                                , Html.label [ class "ml-2 text-red-500" ] [ Html.text "Failed to delete." ]
+                                                ]
+
+                                            _ ->
+                                                [ Html.label [ class "mr-2" ] [ Html.text "Code:" ]
+                                                , Html.input [ value model.projectSecret, onInput InputSecretCode, class "mr-2 w-32 py-2 px-4 border rounded" ] []
+                                                , Html.button [ class "border py-2 px-4 bg-red-500 text-white", onClick Delete ] [ Html.text "Delete" ]
+                                                ]
+                                        )
                                     ]
 
                             _ ->
